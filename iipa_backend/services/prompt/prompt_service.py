@@ -1,10 +1,10 @@
-from app.services.kb.kb_service import (
+from iipa_backend.services.kb.kb_service import (
     add_context,
     add_premise,
     search_premise,
 )
-from app.services.prompt.llm_quest import llm_quest
-from app.services.tactics.tactics_service import (
+from iipa_backend.services.prompt.llm_quest import llm_quest
+from iipa_backend.services.tactics.tactics_service import (
     expand_assumptions,
     prove,
     prove_within_context,

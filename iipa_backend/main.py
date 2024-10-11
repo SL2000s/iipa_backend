@@ -5,8 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from types import SimpleNamespace
 
-from app.models.prompt import Prompt
-from app.controllers.prompt_controller import PromptController
+from iipa_backend.models.prompt import Prompt
+from iipa_backend.controllers.prompt_controller import PromptController
 
 
 app = FastAPI()

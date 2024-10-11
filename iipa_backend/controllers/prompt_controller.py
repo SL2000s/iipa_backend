@@ -1,5 +1,5 @@
-from app.models.prompt import Prompt
-from app.services.prompt.prompt_service import PromptService
+from iipa_backend.models.prompt import Prompt
+from iipa_backend.services.prompt.prompt_service import PromptService
 
 
 class PromptController:
