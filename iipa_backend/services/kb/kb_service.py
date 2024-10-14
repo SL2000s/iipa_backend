@@ -6,5 +6,5 @@ def add_premise():
     pass
 
 
-def search_premise():
+def retrieve_premises():
     pass
