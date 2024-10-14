@@ -12,7 +12,7 @@ from iipa_backend.controllers.prompt_controller import PromptController
 app = FastAPI()
 
 # Set up CORS so the frontend can communicate with the backend
-allow_origins = os.getenv("ALLOW_ORIGINS", "http://localhost:3000").split(",")  # TODO: add ALLOW_ORIGINS to .env
+allow_origins = os.getenv("ALLOW_ORIGINS", "http://localhost:3000").split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allow_origins,
