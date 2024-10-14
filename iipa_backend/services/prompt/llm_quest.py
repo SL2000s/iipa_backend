@@ -16,7 +16,7 @@ from config import (
 )
 
 
-def openai_quest(prompt_template: PromptTemplate, template_variables: Dict = {}):
+async def openai_quest(prompt_template: PromptTemplate, template_variables: Dict = {}):
     client = AzureChatOpenAI(
         model_name=OPENAI_MODEL_NAME,
         temperature=OPENAI_TEMPERATURE,
@@ -29,15 +29,15 @@ def openai_quest(prompt_template: PromptTemplate, template_variables: Dict = {})
         seed=OPENAI_SEED,
     )
     chain = prompt_template | client
-    chain_results = chain.invoke(template_variables)
+    chain_results = await chain.ainvoke(template_variables)
     result_text = chain_results.content
-    return result_text#.strip('\n').strip()
+    return result_text
 
 
-def llm_quest(prompt):
+async def llm_quest(prompt):
     prompt_template = PromptTemplate.from_template(
         prompt,
         template_format=PROMPT_TEMPLATE_FORMAT,
     )
-    llm_ans = openai_quest(prompt_template)
+    llm_ans = await openai_quest(prompt_template)
     return llm_ans
