@@ -4,7 +4,7 @@ from typing import Dict
 from langchain.prompts.prompt import PromptTemplate
 from langchain_openai import AzureChatOpenAI
 
-from config import (
+from iipa_backend.services.prompt.config import (
     PROMPT_TEMPLATE_FORMAT,
     OPENAI_MODEL_NAME,
     OPENAI_TEMPERATURE,
@@ -41,3 +41,11 @@ async def llm_quest(prompt):
     )
     llm_ans = await openai_quest(prompt_template)
     return llm_ans
+
+
+if __name__ == '__main__':              # TODO: remove
+    from dotenv import load_dotenv
+    load_dotenv()
+    import asyncio
+    ans = asyncio.run(llm_quest('What is 1+1?'))
+    print(ans)
