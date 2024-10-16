@@ -1,21 +1,14 @@
-from iipa_backend.services.kb.kb_service import (
-    add_context,
-    add_premise,
-    search_premise,
-)
+from iipa_backend.config import TACTICS
+from iipa_backend.services.prompt.config import NL2TACTIC_PROMPT_TEMPLATE
 from iipa_backend.services.prompt.llm_quest import llm_quest
-from iipa_backend.services.tactics.tactics_service import (
-    expand_assumptions,
-    prove,
-    prove_within_context,
-    verify_proof,
-    verify_statement,
-)
 
 
 class PromptService:
-    def nl2tactic(self, prompt):
-        pass
+    async def nl2tactic(self, user_prompt):
+        nl2tactic_prompt = NL2TACTIC_PROMPT_TEMPLATE.format(prompt=user_prompt)
+        ans = await llm_quest(nl2tactic_prompt)
+        return ans
 
-    async def process_user_prompt(self, prompt):
-        return "TODO: PROMPT LLM"
+    async def process_user_prompt(self, user_prompt):
+        tactic = await self.nl2tactic(user_prompt)
+        return tactic
