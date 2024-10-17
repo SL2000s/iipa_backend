@@ -54,8 +54,8 @@ TASK: {{prompt}}"""
 
 
 # USER_PROMPT_WITH_HISTORY_TEMPLATE = """You are a proof assistent answering to prompts. Given the (possible empty) conversation history, answer to the new prompt.
-USER_PROMPT_WITH_HISTORY_TEMPLATE = """CONVERSATION HISTORY:
-{conversation_history}
+PROMPT_WITH_HISTORY_TEMPLATE = """CONVERSATION HISTORY:
+{history}
 
 NEW PROMPT:
 {prompt}"""

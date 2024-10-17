@@ -11,7 +11,7 @@ class PromptService:
         return ans
 
     async def process_user_prompt(self, user_prompt: Prompt):
-        return await llm_quest(user_prompt.create_history_str())
+        return await llm_quest(user_prompt.prompt_with_history())
         tactic = await self.nl2tactic(user_prompt)
         return tactic
 
