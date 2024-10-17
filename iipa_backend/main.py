@@ -1,4 +1,3 @@
-# from app.routes import tactics, kb                                            # TODO: implement or remove
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
@@ -20,9 +19,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# app.include_router(tactics.router, prefix="/tactics", tags=["Tactics"])       # TODO: implement or remove
-# app.include_router(kb.router, prefix="/kb", tags=["Knowledge Base"])          # TODO: implement or remove
-
 
 context = SimpleNamespace()
 context.prompt_controller = PromptController()
@@ -34,8 +30,22 @@ async def root():
 
 
 @app.post("/submit_prompt")
-async def submit_prompt(prompt_request: Prompt):
+async def submit_prompt(prompt: Prompt):
     """Submit a prompt and get an answer."""
-    prompt = prompt_request.prompt
     answer = await context.prompt_controller.process_prompt(prompt)
     return {"answer": answer}
+
+
+if __name__ == '__main__':
+    prompt = Prompt(
+        prompt='Explain more',
+        history=[
+            {
+                'prompt': 'What is Switzerland?',
+                'answer': 'Switzerland is a country in Europe.'
+            }
+        ]
+    )
+    import asyncio
+    ans = asyncio.run(submit_prompt(prompt))
+    print(ans)

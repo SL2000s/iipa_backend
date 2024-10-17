@@ -34,7 +34,7 @@ async def openai_quest(prompt_template: PromptTemplate, template_variables: Dict
     return result_text
 
 
-async def llm_quest(prompt):
+async def llm_quest(prompt: str):
     prompt_template = PromptTemplate.from_template(
         prompt,
         template_format=PROMPT_TEMPLATE_FORMAT,
