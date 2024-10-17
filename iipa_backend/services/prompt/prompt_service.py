@@ -1,4 +1,3 @@
-from iipa_backend.config import TACTICS
 from iipa_backend.models.prompt import Prompt
 from iipa_backend.services.prompt.config import NL2TACTIC_PROMPT_TEMPLATE
 from iipa_backend.services.prompt.llm_quest import llm_quest
@@ -11,7 +10,7 @@ class PromptService:
         return ans
 
     async def process_user_prompt(self, user_prompt: Prompt):
-        return await llm_quest(user_prompt.prompt_with_history())
+        # return await llm_quest(user_prompt.prompt_with_history())
         tactic = await self.nl2tactic(user_prompt)
         return tactic
 
