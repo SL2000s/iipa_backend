@@ -13,4 +13,3 @@ class PromptService:
         # return await llm_quest(user_prompt.prompt_with_history())
         tactic = await self.nl2tactic(user_prompt)
         return tactic
-
