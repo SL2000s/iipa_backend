@@ -9,7 +9,7 @@ The prompt that will be used for this tactic: {prompt}"""
 ############################
 ######## NEW PROMPT ########
 ############################
-EXAMPLE_TEMPLATE = """Example:
+EXAMPLE_STR_TEMPLATE = """Example:
 Task: {task}
 Answer: {answer}"""
 
@@ -17,7 +17,7 @@ Answer: {answer}"""
 ############################
 ######## NEW PROMPT ########
 ############################
-NL2TACTIC_PROMPT_TEMPLATE = """You are an assistant choosing which tactic to use to solve a task defined in natural language.
+NL2TACTIC_TEMPLATE = """You are an assistant choosing which tactic to use to solve a task defined in natural language.
 You can choose between the following tactics:
 ==== Start of tactics list ====
 {tactics_str}

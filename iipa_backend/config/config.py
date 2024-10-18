@@ -2,8 +2,8 @@ from dotenv import load_dotenv
 import os
 
 from iipa_backend.config._prompts import(
-    EXAMPLE_TEMPLATE,
-    NL2TACTIC_PROMPT_TEMPLATE,
+    EXAMPLE_STR_TEMPLATE,
+    NL2TACTIC_TEMPLATE,
     TACTIC_STR_TEMPLATE,
     PROMPT_WITH_HISTORY_TEMPLATE,
 )

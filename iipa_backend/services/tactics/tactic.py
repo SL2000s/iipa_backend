@@ -9,7 +9,7 @@ class Tactic(ABC):
         self.description = TACTICS_DATA[label]['description']
         self.prompt_template_str = TACTICS_DATA[label]['tactic_prompt']
         self.template_variables = TACTICS_DATA[label]['template_variables']
-        self.examples = TACTICS_DATA[label]['examples']
+        self.examples = TACTICS_DATA[label].get('examples', [])
 
     @abstractmethod
     async def perform_tactic():

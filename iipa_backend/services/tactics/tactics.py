@@ -2,16 +2,20 @@ from typing import Dict, List
 
 from iipa_backend.config.config import (
     ACTIVE_TACTICS,
+    EXAMPLE_STR_TEMPLATE,
+    NL2TACTIC_TEMPLATE,
     TACTICS_DATA,
     TACTIC_STR_TEMPLATE,
 )
 from iipa_backend.models.prompt import Prompt
-from iipa_backend.config.config import NL2TACTIC_PROMPT_TEMPLATE
 from iipa_backend.services.prompt.llm_quest import llm_quest
 from iipa_backend.utils.utils import instantiate_class
 
+
 class Tactics:
     def __init__(self, active_tactics: List[str] = ACTIVE_TACTICS,
+                 example_str_template: str = EXAMPLE_STR_TEMPLATE,
+                 nl2tactic_template: str = NL2TACTIC_TEMPLATE,
                  tactics_data: Dict = TACTICS_DATA,
                  tactic_str_template=TACTIC_STR_TEMPLATE):
         self.tactics = self._instantiate_tactic_classes(
@@ -20,6 +24,8 @@ class Tactics:
         )
         self.label2tactic_instance_dict = self._label2tactic_instances_dict()
         self.tactics_str = self._tactics_str(tactic_str_template)
+        self.examples_str = self._examples_str(example_str_template)
+        self.nl2tactic_template = nl2tactic_template
 
     def _instantiate_tactic_classes(self, active_tactics, tactics_data):
         tactics = []
@@ -42,8 +48,20 @@ class Tactics:
                 prompt=tactic.prompt_template_str,
             ) for tactic in self.tactics
         ]
-        tactic_str = '\n\n'.join(tactic_strs)
-        return tactic_str
+        tactics_str = '\n\n'.join(tactic_strs)
+        return tactics_str
+
+    def _examples_str(self, example_str_template):
+        example_strs = []
+        for tactic in self.tactics:
+            for example in tactic.examples:
+                example_str = example_str_template.format(
+                    task=example['user_prompt'],
+                    answer=example['answer'],
+                )
+                example_strs.append(example_str)
+        examples_str = '\n\n'.join(example_strs)
+        return examples_str
 
     def label2tactic_instance(self, label):
         return self.label2tactic_instance_dict.get(label)
@@ -56,12 +74,17 @@ class Tactics:
         return 'Failed to find a suiting tactic'  # TODO: add proper logging and raise error
 
     async def nl2tactic(self, user_prompt: Prompt):
-        nl2tactic_prompt = NL2TACTIC_PROMPT_TEMPLATE.format(prompt=user_prompt.prompt)
+        nl2tactic_prompt = self.nl2tactic_template.format(
+            tactics_str=self.tactics_str,
+            examples_str=self.examples_str,
+            prompt=user_prompt.prompt,
+        )
         ans = await llm_quest(nl2tactic_prompt)
         return ans
 
     async def process_user_prompt(self, user_prompt: Prompt):
-        return await llm_quest(user_prompt.prompt_with_history())
+        # return await llm_quest(user_prompt.prompt_with_history())
         tactic = await self.nl2tactic(user_prompt)
-        ans = await self.perform_tactic_by_label(tactic, user_prompt)
+        return tactic
+        # ans = await self.perform_tactic_by_label(tactic, user_prompt)
         return ans
