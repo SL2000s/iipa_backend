@@ -1,18 +1,16 @@
 from abc import ABC, abstractmethod
 
+from iipa_backend.config.config import TACTICS_DATA
+
 
 class Tactic(ABC):
-    @property
-    @abstractmethod
-    def label():
-        pass
+    def __init__(self, label):
+        self.label = label
+        self.description = TACTICS_DATA[label]['description']
+        self.prompt_template_str = TACTICS_DATA[label]['tactic_prompt']
+        self.template_variables = TACTICS_DATA[label]['template_variables']
+        self.examples = TACTICS_DATA[label]['examples']
 
-    @property
     @abstractmethod
-    def description():
-        pass
-
-    @property
-    @abstractmethod
-    def prompt_template():
+    async def perform_tactic():
         pass

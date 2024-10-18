@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from types import SimpleNamespace
 
+from iipa_backend.controllers.tactic_controller import TacticController
 from iipa_backend.models.prompt import Prompt
-from iipa_backend.controllers.prompt_controller import PromptController
 
 
 app = FastAPI()
@@ -21,7 +21,7 @@ app.add_middleware(
 
 
 context = SimpleNamespace()
-context.prompt_controller = PromptController()
+context.tactic_controller = TacticController()
 
 
 @app.get("/")
@@ -32,11 +32,11 @@ async def root():
 @app.post("/submit_prompt")
 async def submit_prompt(prompt: Prompt):
     """Submit a prompt and get an answer."""
-    answer = await context.prompt_controller.process_prompt(prompt)
+    answer = await context.tactic_controller.process_user_prompt(prompt)
     return {"answer": answer}
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':      # TODO: remove
     prompt = Prompt(
         prompt='Explain more',
         history=[

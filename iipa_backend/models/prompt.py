@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List, Dict
 
-from iipa_backend.services.prompt.config import PROMPT_WITH_HISTORY_TEMPLATE
+from iipa_backend.config.config import PROMPT_WITH_HISTORY_TEMPLATE
 
 
 class Prompt(BaseModel):

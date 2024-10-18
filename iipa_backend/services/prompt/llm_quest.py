@@ -4,7 +4,7 @@ from typing import Dict
 from langchain.prompts.prompt import PromptTemplate
 from langchain_openai import AzureChatOpenAI
 
-from iipa_backend.services.prompt.config import (
+from iipa_backend.config.config import (
     PROMPT_TEMPLATE_FORMAT,
     OPENAI_MODEL_NAME,
     OPENAI_TEMPERATURE,
