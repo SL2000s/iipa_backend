@@ -63,7 +63,7 @@ Output a dict with the template variable names as keys mapped to their correspon
 Output according to the examples below.
 Output nothing else than the dictionary.
 
-PROMPT TEMPLATE: {prompt_template}
+PROMPT TEMPLATE: \"\"\"{prompt_template}\"\"\"
 TEMPLATE VARIABLES: {template_variables}
 
 {examples}
