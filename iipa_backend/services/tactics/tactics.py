@@ -2,7 +2,7 @@ from typing import Dict, List
 
 from iipa_backend.config.config import (
     ACTIVE_TACTICS,
-    EXAMPLE_STR_TEMPLATE,
+    EXAMPLE_NL2TACTIC_TEMPLATE,
     NL2TACTIC_TEMPLATE,
     TACTICS_DATA,
     TACTIC_STR_TEMPLATE,
@@ -14,17 +14,17 @@ from iipa_backend.utils.utils import instantiate_class
 
 class Tactics:
     def __init__(self, active_tactics: List[str] = ACTIVE_TACTICS,
-                 example_str_template: str = EXAMPLE_STR_TEMPLATE,
+                 example_nl2tactic_template: str = EXAMPLE_NL2TACTIC_TEMPLATE,
                  nl2tactic_template: str = NL2TACTIC_TEMPLATE,
                  tactics_data: Dict = TACTICS_DATA,
-                 tactic_str_template=TACTIC_STR_TEMPLATE):
+                 tactic_str_template: str = TACTIC_STR_TEMPLATE):
         self.tactics = self._instantiate_tactic_classes(
             active_tactics,
             tactics_data,
         )
         self.label2tactic_instance_dict = self._label2tactic_instances_dict()
         self.tactics_str = self._tactics_str(tactic_str_template)
-        self.examples_str = self._examples_str(example_str_template)
+        self.examples_nl2tactic_str = self._examples_nl2tactic_str(example_nl2tactic_template)
         self.nl2tactic_template = nl2tactic_template
 
     def _instantiate_tactic_classes(self, active_tactics, tactics_data):
@@ -45,19 +45,19 @@ class Tactics:
             tactic_str_template.format(
                 label=tactic.label,
                 description=tactic.description,
-                prompt=tactic.prompt_template_str,
+                prompt=tactic.prompt_template,
             ) for tactic in self.tactics
         ]
         tactics_str = '\n\n'.join(tactic_strs)
         return tactics_str
 
-    def _examples_str(self, example_str_template):
+    def _examples_nl2tactic_str(self, example_template):
         example_strs = []
         for tactic in self.tactics:
             for example in tactic.examples:
-                example_str = example_str_template.format(
+                example_str = example_template.format(
                     task=example['user_prompt'],
-                    answer=example['answer'],
+                    answer=tactic.label,
                 )
                 example_strs.append(example_str)
         examples_str = '\n\n'.join(example_strs)
@@ -75,8 +75,8 @@ class Tactics:
 
     async def nl2tactic(self, user_prompt: Prompt):
         nl2tactic_prompt = self.nl2tactic_template.format(
-            tactics_str=self.tactics_str,
-            examples_str=self.examples_str,
+            tactics=self.tactics_str,
+            examples=self.examples_nl2tactic_str,
             prompt=user_prompt.prompt,
         )
         ans = await llm_quest(nl2tactic_prompt)
@@ -84,7 +84,7 @@ class Tactics:
 
     async def process_user_prompt(self, user_prompt: Prompt):
         # return await llm_quest(user_prompt.prompt_with_history())
-        tactic = await self.nl2tactic(user_prompt)
-        return tactic
-        # ans = await self.perform_tactic_by_label(tactic, user_prompt)
+        tactic_label = await self.nl2tactic(user_prompt)
+        # return tactic
+        ans = await self.perform_tactic_by_label(tactic_label, user_prompt)
         return ans

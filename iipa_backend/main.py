@@ -46,6 +46,15 @@ if __name__ == '__main__':      # TODO: remove
             }
         ]
     )
+    prompt = Prompt(
+        prompt='If x=1, is 2x=2?',
+        # history=[
+        #     {
+        #         'prompt': 'What is Switzerland?',
+        #         'answer': 'Switzerland is a country in Europe.'
+        #     }
+        # ]
+    )
     import asyncio
     ans = asyncio.run(submit_prompt(prompt))
     print(ans)

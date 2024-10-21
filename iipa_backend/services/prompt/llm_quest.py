@@ -1,3 +1,4 @@
+import logging
 import os
 from typing import Dict
 
@@ -13,7 +14,11 @@ from iipa_backend.config.config import (
     OPENAI_DEPLOYMENT_NAME,
     OPENAI_TOP_P,
     OPENAI_SEED,
+    JSON_EXTRACTION_PATTERN,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 async def openai_quest(prompt_template: PromptTemplate, template_variables: Dict = {}):
@@ -35,12 +40,22 @@ async def openai_quest(prompt_template: PromptTemplate, template_variables: Dict
 
 
 async def llm_quest(prompt: str):
+    logger.debug(f'Requesting the LLM with this prompt:\n{prompt}')
     prompt_template = PromptTemplate.from_template(
         prompt,
         template_format=PROMPT_TEMPLATE_FORMAT,
     )
     llm_ans = await openai_quest(prompt_template)
+    logger.debug(f'LLM responded with this answer:\n{llm_ans}')
     return llm_ans
+
+
+def post_process_json_ans(llm_ans: str):
+    logger.debug(f'JSON post-processing this LLM answer:\n{llm_ans}')
+    matches = JSON_EXTRACTION_PATTERN.findall(llm_ans)
+    json_str = matches[0] if matches else llm_ans
+    logger.debug(f'Returning this JSON post-processed LLM answer:\n{json_str}')
+    return json_str
 
 
 if __name__ == '__main__':              # TODO: remove
