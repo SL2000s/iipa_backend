@@ -53,7 +53,7 @@ OPENAI_SEED = 1234
 
 
 # Regex patterns
-JSON_EXTRACTION_PATTERN = re.compile(r'```json\n(.*?)\n```', re.DOTALL)
+CODE_PATTERN = re.compile(r'```.*\n(.*?)\n```', re.DOTALL)
 
 
 # Tactics

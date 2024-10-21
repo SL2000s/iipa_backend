@@ -14,7 +14,7 @@ from iipa_backend.config.config import (
     OPENAI_DEPLOYMENT_NAME,
     OPENAI_TOP_P,
     OPENAI_SEED,
-    JSON_EXTRACTION_PATTERN,
+    CODE_PATTERN,
 )
 
 
@@ -39,7 +39,7 @@ async def openai_quest(prompt_template: PromptTemplate, template_variables: Dict
     return result_text
 
 
-async def llm_quest(prompt: str):
+async def llm_quest(prompt: str, extract_code: bool = False):
     logger.debug(f'Requesting the LLM with this prompt:\n{prompt}')
     prompt_template = PromptTemplate.from_template(
         prompt,
@@ -47,15 +47,22 @@ async def llm_quest(prompt: str):
     )
     llm_ans = await openai_quest(prompt_template)
     logger.debug(f'LLM responded with this answer:\n{llm_ans}')
-    return llm_ans
+    llm_ans_post_processed = post_process_llm_ans(llm_ans, extract_code)
+    logger.debug(f'Returning this post-processed LLM answer:\n{llm_ans_post_processed}')
+    return llm_ans_post_processed
 
 
-def post_process_json_ans(llm_ans: str):
+def extract_llm_ans_code(llm_ans, code_pattern=CODE_PATTERN):
     logger.debug(f'JSON post-processing this LLM answer:\n{llm_ans}')
-    matches = JSON_EXTRACTION_PATTERN.findall(llm_ans)
-    json_str = matches[0] if matches else llm_ans
-    logger.debug(f'Returning this JSON post-processed LLM answer:\n{json_str}')
-    return json_str
+    matches = code_pattern.findall(llm_ans)
+    code = matches[0] if matches else llm_ans
+    return code
+
+
+def post_process_llm_ans(llm_ans: str, extract_code: bool = False):
+    if extract_code:
+        llm_ans = extract_llm_ans_code(llm_ans)
+    return llm_ans
 
 
 if __name__ == '__main__':              # TODO: remove

@@ -7,7 +7,6 @@ from iipa_backend.config.config import (
 from iipa_backend.models.prompt import Prompt
 from iipa_backend.services.prompt.llm_quest import (
     llm_quest,
-    post_process_json_ans,
 )
 from iipa_backend.services.tactics.tactic import Tactic
 
@@ -48,7 +47,6 @@ class PromptTactic(Tactic):
             examples=self.examples_template_variables_str,
             user_prompt=user_prompt.prompt,                             # TODO: add history
         )
-        llm_ans = await llm_quest(prompt)
-        json_str = post_process_json_ans(llm_ans)
-        template_variables = json.loads(json_str)
+        llm_ans = await llm_quest(prompt, extract_code=True)
+        template_variables = json.loads(llm_ans)
         return template_variables
