@@ -58,10 +58,13 @@ if __name__ == '__main__':      # TODO: remove
     proof_prompt = Prompt(
         prompt='Prove that a^2 + b^2 = c^2 for a right triangle with legs a and b, and hypothenuse c.',
     )
-    proof_in_context = Prompt(
+    proof_in_context_prompt = Prompt(
         prompt='Given the statements "A prime number is only divisible by 1 and itself", and "9 is divisible by 3", prove "9 is not a prime number."',
+    )
+    premises_retrieval_prompt = Prompt(
+        prompt='What are the premises related to the statement "The sum of two odd numbers is even."',
     )
 
     import asyncio
-    ans = asyncio.run(submit_prompt(proof_in_context))
+    ans = asyncio.run(submit_prompt(premises_retrieval_prompt))
     print(ans)

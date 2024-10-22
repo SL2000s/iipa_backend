@@ -64,12 +64,13 @@ PROOF_LABEL = 'proof'
 PROOF_IN_CONTEXT_LABEL = 'proof_IN_context'
 ADD_CONTEXT_LABEL = 'add_context'
 ADD_STATEMENT_LABEL = 'add_statement'
-RETRIEVE_PREMISES_LABEL = 'retrieve_premises'
+PREMISES_RETRIEVAL_LABEL = 'premises_retrieval'
 CUSTOM_PROMPT_LABEL = 'custom_prompt'
 
 ACTIVE_TACTICS = [
     ASSUMPTIONS_EXPANSION_LABEL,
     ENTAILMENT_VERIFICATION_LABEL,
+    PREMISES_RETRIEVAL_LABEL,
     PROOF_LABEL,
     PROOF_IN_CONTEXT_LABEL,
     STATEMENT_VERIFICATION_LABEL,
@@ -78,7 +79,7 @@ ACTIVE_TACTICS = [
 TACTICS_DATA = {
     ASSUMPTIONS_EXPANSION_LABEL: {
         "description": "Expands the implied definitions and assumptions for a given statement.",
-        "tactic_prompt_template": "Given a statement p_i expand the implied definitions and assumptions by formally:\n-Eliciting definitions for all terms used in p_i.\n-Eliciting all known premises behind p_i.\n-Return a list with the definitions and premises.\n\n{p_i}",
+        "tactic_prompt_template": "Given a statement p_i expand the implied definitions and assumptions by formally:\n-Eliciting definitions for all terms used in p_i.\n-Eliciting all known premises behind p_i.\n-Return a list with the definitions and premises.\n\np_i: {p_i}",
         "template_variables": [
             "p_i",
         ],
@@ -112,7 +113,7 @@ TACTICS_DATA = {
         ],
         "examples": [
             {
-                "user_prompt": "Verify that p_j follows from p_i.\n\np_i: 'A matrix A is invertible if and only if det(A) ≠ 0'\np_j: 'det(A) = 0, so A is not invertible'",
+                "user_prompt": "Verify that p_j follows from p_i.\n\np_i: A matrix A is invertible if and only if det(A) ≠ 0\np_j: det(A) = 0, so A is not invertible",
                 "template_variables": {
                     "p_i": "A matrix A is invertible if and only if det(A) ≠ 0",
                     "p_j": "det(A) = 0, so A is not invertible",
@@ -131,6 +132,26 @@ TACTICS_DATA = {
         "location": {
             "module_path": os.path.join(PROMPT_TACTICS_DIR, 'entailment_verification.py'),
             "class_name": "EntailmentVerifier",
+        },
+    },
+    PREMISES_RETRIEVAL_LABEL: {
+        "description": "Retrieves all premises related to a given search term from the knowledge base (KB).",
+        "tactic_prompt_template": "Create a list of all premises related to s_i.\n\ns_i: {s_i}",
+        "template_variables": [
+            "s_i",
+        ],
+        "examples": [
+            {
+                "user_prompt": "Retrieve premises related to the term s_i.\n\ns_i: Pythagorean theorem.",
+                "template_variables": {
+                    "s_i": "Pythagorean theorem",
+                },
+                "answer": "Here's a list of all premises related to the Pythagorean theorem (denoted as \( s_i \)):\n\n1. **Premise 1: Right Triangle Requirement**\n   - The Pythagorean theorem applies only to right-angled triangles.\n   - Premise: In a right triangle, one of the angles must be exactly \(90^\circ\).\n\n2. **Premise 2: Relationship Between Sides**\n   - The Pythagorean theorem expresses a relationship between the lengths of the sides of a right triangle: \( a^2 + b^2 = c^2 \).\n   - Premise: The square of the length of the hypotenuse (\(c\)) is equal to the sum of the squares of the lengths of the other two sides (\(a\) and \(b\)).\n\n3. **Premise 3: Definition of Hypotenuse**\n   - The hypotenuse is the longest side of a right triangle, opposite the right angle.\n   - Premise: The side labeled \(c\) must be the hypotenuse in the equation \(a^2 + b^2 = c^2\).\n\n4. **Premise 4: Euclidean Geometry Assumption**\n   - The Pythagorean theorem holds in Euclidean geometry, where the space is flat and the standard distance formula applies.\n   - Premise: The theorem assumes a flat (2-dimensional) Euclidean plane without curvature.\n\n5. **Premise 5: Distance Formula in Coordinate Geometry**\n   - The Pythagorean theorem can be derived from the distance formula in a coordinate plane.\n   - Premise: For points \( (x_1, y_1) \) and \( (x_2, y_2) \), the distance between them is \( d = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2} \), which is an application of the theorem.\n\n6. **Premise 6: Scalability to Higher Dimensions**\n   - The Pythagorean theorem generalizes to higher dimensions (e.g., in three dimensions, \( a^2 + b^2 + c^2 = d^2 \)).\n   - Premise: The theorem can be extended from 2D triangles to 3D geometry using the same principles.\n\n7. **Premise 7: Converse of the Pythagorean Theorem**\n   - If \( a^2 + b^2 = c^2 \), then the triangle must have a right angle.\n   - Premise: The converse of the theorem holds true, implying the triangle is a right triangle if the equation is satisfied.\n\nThese premises form the foundation for understanding the Pythagorean theorem and its applications.",
+            },
+        ],
+        "location": {
+            "module_path": os.path.join(PROMPT_TACTICS_DIR, 'premises_retrieval.py'),
+            "class_name": "PremisesRetriever",
         },
     },
     PROOF_LABEL: {
@@ -162,7 +183,7 @@ TACTICS_DATA = {
         ],
         "examples": [
             {
-                "user_prompt": "Given the context 'All prime numbers greater than 2 are odd' and '5 is a prime number', prove that '5 is odd'.",
+                "user_prompt": "Prove p_i given the context P_i.\n\np_i: 5 is odd.\nP_i: 'All prime numbers greater than 2 are odd' and '5 is a prime number'.",
                 "template_variables": {
                     "p_i": "5 is odd",
                     "P_i": "['All prime numbers greater than 2 are odd', '5 is a prime number']",
@@ -222,16 +243,6 @@ TACTICS_DATA = {
     #     #     }
     #     # ],
     # },
-    # RETRIEVE_PREMISES_LABEL: {
-    #     "description": "Retrieve premises related to a given search term from the knowledge base.",
-    #     "prompt": "Retrieve premises from the knowledge base related to the search term or statement s.",
-    #     # "examples": [
-    #     #     {
-    #     #         "task": "Retrieve premises related to the term 'Pythagorean theorem'.",
-    #     #         "answer": "Premises retrieved: (1) In a right triangle, the square of the hypotenuse is equal to the sum of the squares of the other two sides (c^2 = a^2 + b^2)."
-    #     #     }
-    #     # ],
-    # }
     CUSTOM_PROMPT_LABEL: {
         "description": "Solve this equation: 2x+4=10.",
         "tactic_prompt": "{user_prompt}",
