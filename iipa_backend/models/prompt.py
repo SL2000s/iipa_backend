@@ -12,7 +12,7 @@ class Prompt(BaseModel):
     def history_str(self):
         history_strs = []
         for entry in self.history:
-            history_strs.append(f'Prompt": {entry["prompt"]}\nAnswer: {entry["answer"]}')
+            history_strs.append(f'Prompt: {entry["prompt"]}\nAnswer: {entry["answer"]}')
         history_str = '\n'.join(history_strs) or '-'
         return history_str
 
