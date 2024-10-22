@@ -57,7 +57,7 @@ CODE_PATTERN = re.compile(r'```.*\n(.*?)\n```', re.DOTALL)
 
 
 # Tactics
-ASSUMPTION_EXPANSION_LABEL = 'assumption_expansion'
+ASSUMPTIONS_EXPANSION_LABEL = 'assumptions_expansion'
 ENTAILMENT_VERIFICATION_LABEL = 'entailment_verification'
 STATEMENT_VERIFICATION_LABEL = 'statement_verification'
 PROOF_LABEL = 'proof'
@@ -68,20 +68,38 @@ RETRIEVE_PREMISES_LABEL = 'retrieve_premises'
 CUSTOM_PROMPT_LABEL = 'custom_prompt'
 
 ACTIVE_TACTICS = [
-    ENTAILMENT_VERIFICATION_LABEL
+    ASSUMPTIONS_EXPANSION_LABEL,
+    ENTAILMENT_VERIFICATION_LABEL,
 ]
 
 TACTICS_DATA = {
-    # ASSUMPTION_EXPANSION_LABEL: {
-    #     "description": "Expand the implied definitions and assumptions for a given statement.",
-    #     "prompt": "Given a statement p_i, expand the implied definitions and assumptions by eliciting definitions for all terms used in p_i and all known premises behind p_i.",
-    #     # "examples": [
-    #     #     {
-    #     #         "task": "Expand the assumptions for the statement 'For all x in R, if x > 0, then x^2 > 0'.",
-    #     #         "answer": "The term 'x in R' refers to x being a real number. The assumption is that real numbers are ordered and have properties like being positive or negative. The premise behind 'x^2 > 0' assumes the standard properties of real numbers, particularly that squaring any positive real number results in a positive value."
-    #     #     }
-    #     # ],
-    # },
+    ASSUMPTIONS_EXPANSION_LABEL: {
+        "description": "Expands the implied definitions and assumptions for a given statement.",
+        "tactic_prompt_template": "Given a statement p_i expand the implied definitions and assumptions by formally:\n-Eliciting definitions for all terms used in p_i.\n-Eliciting all known premises behind p_i.\n-Return a list with the definitions and premises.\n\n{p_i}",
+        "template_variables": [
+            "p_i",
+        ],
+        "examples": [
+            {
+                "user_prompt": "Expand implied definitions and assumptions from p_i.\n\np_i: For all x in R, if x > 0, then x^2 > 0.",
+                "template_variables": {
+                    "p_i": "For all x in R, if x > 0, then x^2 > 0",
+                },
+                "answer": "The term 'x in R' refers to x being a real number. The assumption is that real numbers are ordered and have properties like being positive or negative. The premise behind 'x^2 > 0' assumes the standard properties of real numbers, particularly that squaring any positive real number results in a positive value.",
+            },
+            {
+                "user_prompt": "Expand assumptions from 'All prime numbers greater than 2 are odd.'",
+                "template_variables": {
+                    "p_i": "All prime numbers greater than 2 are odd."
+                },
+                "answer": "### Definitions:\n\n1. **Prime number**: A natural number greater than 1 that has no positive divisors other than 1 and itself. Formally, a number \( p \) is prime if for any \( a \) and \( b \), if \( p = ab \), then either \( a = 1 \) or \( b = 1 \).\n2. **Odd number**: A number \( n \) that can be expressed in the form \( n = 2k + 1 \), where \( k \) is an integer.\n3. **Even number**: A number \( n \) that can be expressed in the form \( n = 2k \), where \( k \) is an integer.\n4. **Greater than 2**: A number is greater than 2 if it is larger than 2 in magnitude (i.e., \( n > 2 \)).\n  \n### Premises:\n\n1. **All prime numbers**: Every number that meets the definition of a prime number is considered.\n2. **Prime numbers are either 2 or odd**: The only even prime number is 2. All other prime numbers, if they exist, must be odd (as dividing by 2 would violate the prime property).\n3. **2 is not greater than 2**: The number 2 is explicitly excluded from the claim because it is not greater than itself.\n4. **All even numbers greater than 2 are composite**: Any even number \( n > 2 \) is not prime because it has divisors other than 1 and itself, namely 2.\n\n### Conclusion:\n\n- Every prime number that is greater than 2 must be odd, as an even number greater than 2 cannot be prime.\n  \n**List of Definitions and Premises:**\n1. **Prime number**: A number with no divisors other than 1 and itself.\n2. **Odd number**: A number of the form \( 2k + 1 \), where \( k \) is an integer.\n3. **Even number**: A number of the form \( 2k \), where \( k \) is an integer.\n4. **Greater than 2**: A number larger than 2.\n5. **Premise 1**: The number 2 is the only even prime.\n6. **Premise 2**: All numbers greater than 2 are either odd or composite.\n7. **Premise 3**: A number greater than 2 cannot be both even and prime.",
+            },
+        ],
+        "location": {
+            "module_path": os.path.join(PROMPT_TACTICS_DIR, 'assumptions_expansion.py'),
+            "class_name": "AssumptionsExpander",
+        },
+    },
     ENTAILMENT_VERIFICATION_LABEL: {
         "description": "Verifies if the entailment between two statements p_i and p_j is logically consistent.",
         "tactic_prompt_template": "Given two statements p_i and p_j verify if the entailment between the two statements are logically consistent and sound by formally:\n-Expanding the steps into granular operations and step-wise inference steps.\n-Elicit all supported premises and definitions.\n-For each step validate the consistency and correctness.\n-Return a final assessment if p_j is entailed by  p_i and the supporting proof.\n\np_i: {p_i}\np_j: {p_j}",

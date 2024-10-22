@@ -37,7 +37,7 @@ async def submit_prompt(prompt: Prompt):
 
 
 if __name__ == '__main__':      # TODO: remove
-    prompt = Prompt(
+    prompt_with_history = Prompt(
         prompt='Explain more',
         history=[
             {
@@ -46,15 +46,13 @@ if __name__ == '__main__':      # TODO: remove
             }
         ]
     )
-    prompt = Prompt(
+    eintailment_verification_prompt = Prompt(
         prompt='If x=1, is 2x=2?',
-        # history=[
-        #     {
-        #         'prompt': 'What is Switzerland?',
-        #         'answer': 'Switzerland is a country in Europe.'
-        #     }
-        # ]
     )
+    assumptions_expansion_prompt = Prompt(
+        prompt='What are the assumptions behind "The sum of two odd integers are even."',
+    )
+
     import asyncio
-    ans = asyncio.run(submit_prompt(prompt))
+    ans = asyncio.run(submit_prompt(assumptions_expansion_prompt))
     print(ans)
