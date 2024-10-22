@@ -22,6 +22,3 @@ class Prompt(BaseModel):
             prompt=self.prompt,
         )
         return prompt
-
-    def prompt(self):
-        return self.prompt
