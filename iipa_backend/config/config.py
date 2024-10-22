@@ -70,6 +70,7 @@ CUSTOM_PROMPT_LABEL = 'custom_prompt'
 ACTIVE_TACTICS = [
     ASSUMPTIONS_EXPANSION_LABEL,
     ENTAILMENT_VERIFICATION_LABEL,
+    PROOF_LABEL,
     STATEMENT_VERIFICATION_LABEL,
 ]
 
@@ -131,8 +132,28 @@ TACTICS_DATA = {
             "class_name": "EntailmentVerifier",
         },
     },
+    PROOF_LABEL: {
+        "description": "Constructs a proof to determine if a statements p_i is true or false.",
+        "tactic_prompt_template": "Given a statement p_i build a proof if p_i is true or false, by formally:\n-Eliciting definitions for all terms used in p_i.\n-Eliciting all relevant premises behind p_i.\n-Building a granular proof (one operation per step) between the set of premises and the statement p_i.\n-Return a final assessment if p_i is entailed by the premises and definitions and the proof.\n\np_i: {p_i}",
+        "template_variables": [
+            "p_i",
+        ],
+        "examples": [
+            {
+                "user_prompt": "Prove p_i.\n\np_i: The square of any even number is divisible by 4.",
+                "template_variables": {
+                    "p_i": "The square of any even number is divisible by 4.",
+                },
+                "answer": "To prove or disprove the statement \( p_i \): \"The square of any even number is divisible by 4,\" let's break it down using the approach you suggested:\n\n### Step 1: Definitions of all terms\n- **Even number**: A number \( n \) is said to be even if there exists an integer \( k \) such that \( n = 2k \).\n- **Square of a number**: The square of a number \( n \) is \( n^2 = n \times n \).\n- **Divisibility by 4**: A number \( m \) is divisible by 4 if there exists an integer \( l \) such that \( m = 4l \).\n\n### Step 2: Relevant premises\n- Any even number can be written as \( n = 2k \), where \( k \) is an integer.\n- The square of any number is \( n^2 = n \times n \).\n- For a number to be divisible by 4, the result must be of the form \( m = 4l \), where \( l \) is an integer.\n\n### Step 3: Building the granular proof\n\n#### Proof:\n1. Let \( n \) be any even number. By definition, we can write \( n = 2k \), where \( k \) is an integer.\n2. The square of \( n \) is:\n   \[\n   n^2 = (2k)^2\n   \]\n3. Simplify the square:\n   \[\n   n^2 = 2k \times 2k = 4k^2\n   \]\n4. Now, observe that \( n^2 = 4k^2 \) is divisible by 4 because we can rewrite it as:\n   \[\n   n^2 = 4(k^2)\n   \]\n   where \( k^2 \) is an integer (since \( k \) is an integer, the square of an integer is also an integer).\n\n5. Thus, \( n^2 \) is of the form \( 4l \), where \( l = k^2 \) is an integer.\n\n### Step 4: Final assessment\nSince \( n^2 = 4k^2 \) is divisible by 4 for any even \( n \), we conclude that the statement \( p_i \) is **true**.",
+            },
+        ],
+        "location": {
+            "module_path": os.path.join(PROMPT_TACTICS_DIR, 'proof.py'),
+            "class_name": "Prover",
+        }
+    },
     STATEMENT_VERIFICATION_LABEL: {
-        "description": "Given a statement p_i verify if the statement is correct.",
+        "description": "Verifies if a given statement p_i is correct.",
         "tactic_prompt_template": "Given a statement p_i verify if the statement is correct by formally:\n-Eliciting definitions for all terms used in p_i.\n-Eliciting all relevant premises behind p_i.\n-Establishing the soundness of each premise and definition.\n-Building a granular syllogistic inference between the set of premises and the statement p_i.\n-Return a final assessment if p_i is entailed by the premises and definitions.\n\np_i: {p_i}",
         "template_variables": [
             "p_i",
@@ -158,16 +179,6 @@ TACTICS_DATA = {
             "class_name": "StatementVerifier",
         },
     },
-    # PROOF_LABEL: {
-    #     "description": "Construct a proof to determine if a given statement is true or false.",
-    #     "prompt": "Given a statement p_i, build a proof by eliciting definitions, relevant premises, and constructing a granular proof step-by-step.",
-    #     "examples": [
-    #         {
-    #             "task": "Prove or disprove the statement 'The square of any even number is divisible by 4'.",
-    #             "answer": "Proof: Let the even number be 2n, where n is an integer. The square of 2n is (2n)^2 = 4n^2, which is divisible by 4. Therefore, the statement is true."
-    #         }
-    #     ],
-    # },
     # PROOF_WITHIN_CONTEXT_LABEL: {
     #     "description": "Construct a proof for a goal statement given a set of premises in a context.",
     #     "prompt": "Given a goal statement p_i and context P, build a proof by outlining a strategy and executing a step-wise proof based on the premises in the context.",
