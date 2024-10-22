@@ -42,9 +42,9 @@ if __name__ == '__main__':      # TODO: remove
         history=[
             {
                 'prompt': 'What is Switzerland?',
-                'answer': 'Switzerland is a country in Europe.'
-            }
-        ]
+                'answer': 'Switzerland is a country in Europe.',
+            },
+        ],
     )
     assumptions_expansion_prompt = Prompt(
         prompt='What are the assumptions behind "The sum of two odd integers are even."',
@@ -64,7 +64,18 @@ if __name__ == '__main__':      # TODO: remove
     premises_retrieval_prompt = Prompt(
         prompt='What are the premises related to the statement "The sum of two odd numbers is even."',
     )
+    custom_prompt = Prompt(
+        # prompt='Solve x^2=4',
+        # prompt='Who found out that a^2 + b^2 = c^2',
+        prompt='Explain more',
+        history=[
+            {
+                'prompt': 'What is Switzerland?',
+                'answer': 'Switzerland is a country in Europe.',
+            },
+        ],
+    )
 
     import asyncio
-    ans = asyncio.run(submit_prompt(premises_retrieval_prompt))
+    ans = asyncio.run(submit_prompt(custom_prompt))
     print(ans)

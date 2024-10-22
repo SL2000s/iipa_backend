@@ -61,7 +61,7 @@ ASSUMPTIONS_EXPANSION_LABEL = 'assumptions_expansion'
 ENTAILMENT_VERIFICATION_LABEL = 'entailment_verification'
 STATEMENT_VERIFICATION_LABEL = 'statement_verification'
 PROOF_LABEL = 'proof'
-PROOF_IN_CONTEXT_LABEL = 'proof_IN_context'
+PROOF_IN_CONTEXT_LABEL = 'proof_in_context'
 ADD_CONTEXT_LABEL = 'add_context'
 ADD_STATEMENT_LABEL = 'add_statement'
 PREMISES_RETRIEVAL_LABEL = 'premises_retrieval'
@@ -69,6 +69,7 @@ CUSTOM_PROMPT_LABEL = 'custom_prompt'
 
 ACTIVE_TACTICS = [
     ASSUMPTIONS_EXPANSION_LABEL,
+    CUSTOM_PROMPT_LABEL,
     ENTAILMENT_VERIFICATION_LABEL,
     PREMISES_RETRIEVAL_LABEL,
     PROOF_LABEL,
@@ -102,6 +103,25 @@ TACTICS_DATA = {
         "location": {
             "module_path": os.path.join(PROMPT_TACTICS_DIR, 'assumptions_expansion.py'),
             "class_name": "AssumptionsExpander",
+        },
+    },
+    CUSTOM_PROMPT_LABEL: {
+        "description": "Prompts the LLM (having access to the knowledge base KB) with a custom question. Should be used for only if no standard tactic can be used instead.",
+        "tactic_prompt_template": "{custom_prompt}",
+        "template_variables": [
+            "custom_prompt"
+        ],
+        "examples": [
+            {
+                "user_prompt": "Solve this equation: 2x+4=10.",
+                "template_variables": {
+                    "custom_prompt": "Solve this equation: 2x+4=10.",
+                },
+            },
+        ],
+        "location": {
+            "module_path": os.path.join(PROMPT_TACTICS_DIR, 'custom_prompt.py'),
+            "class_name": "CustomPrompt",
         },
     },
     ENTAILMENT_VERIFICATION_LABEL: {
@@ -243,14 +263,6 @@ TACTICS_DATA = {
     #     #     }
     #     # ],
     # },
-    CUSTOM_PROMPT_LABEL: {
-        "description": "Solve this equation: 2x+4=10.",
-        "tactic_prompt": "{user_prompt}",
-        "template_variables": [
-            "user_prompt"
-        ],
-        "examples": [],
-    },
 }
 
  
