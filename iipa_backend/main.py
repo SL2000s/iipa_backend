@@ -46,13 +46,16 @@ if __name__ == '__main__':      # TODO: remove
             }
         ]
     )
-    eintailment_verification_prompt = Prompt(
-        prompt='If x=1, is 2x=2?',
-    )
     assumptions_expansion_prompt = Prompt(
         prompt='What are the assumptions behind "The sum of two odd integers are even."',
     )
+    eintailment_verification_prompt = Prompt(
+        prompt='If x=1, is 2x=2?',
+    )
+    statement_verification_prompt = Prompt(
+        prompt='Is it true that the square of an integer is always congruent to 0 or 1 modulo 3?'
+    )
 
     import asyncio
-    ans = asyncio.run(submit_prompt(assumptions_expansion_prompt))
+    ans = asyncio.run(submit_prompt(statement_verification_prompt))
     print(ans)

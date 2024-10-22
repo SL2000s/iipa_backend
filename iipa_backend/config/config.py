@@ -70,6 +70,7 @@ CUSTOM_PROMPT_LABEL = 'custom_prompt'
 ACTIVE_TACTICS = [
     ASSUMPTIONS_EXPANSION_LABEL,
     ENTAILMENT_VERIFICATION_LABEL,
+    STATEMENT_VERIFICATION_LABEL,
 ]
 
 TACTICS_DATA = {
@@ -81,7 +82,7 @@ TACTICS_DATA = {
         ],
         "examples": [
             {
-                "user_prompt": "Expand implied definitions and assumptions from p_i.\n\np_i: For all x in R, if x > 0, then x^2 > 0.",
+                "user_prompt": "Expand the implied definitions and assumptions from p_i.\n\np_i: For all x in R, if x > 0, then x^2 > 0.",
                 "template_variables": {
                     "p_i": "For all x in R, if x > 0, then x^2 > 0",
                 },
@@ -130,24 +131,33 @@ TACTICS_DATA = {
             "class_name": "EntailmentVerifier",
         },
     },
-    CUSTOM_PROMPT_LABEL: {
-        "description": "",
-        "tactic_prompt": "{user_prompt}",
+    STATEMENT_VERIFICATION_LABEL: {
+        "description": "Given a statement p_i verify if the statement is correct.",
+        "tactic_prompt_template": "Given a statement p_i verify if the statement is correct by formally:\n-Eliciting definitions for all terms used in p_i.\n-Eliciting all relevant premises behind p_i.\n-Establishing the soundness of each premise and definition.\n-Building a granular syllogistic inference between the set of premises and the statement p_i.\n-Return a final assessment if p_i is entailed by the premises and definitions.\n\np_i: {p_i}",
         "template_variables": [
-            "user_prompt"
+            "p_i",
         ],
-        "examples": [],
+        "examples": [
+            {
+                "user_prompt": "Is p_i correct?\n\np_i: The sum of two odd integers is always even.",
+                "template_variables": {
+                    "p_i": "The sum of two odd integers is always even."
+                },
+                "answer": "Let's verify the statement \( p_i \): \"The sum of two odd integers is always even,\" by following the requested steps.\n\n### Step 1: Eliciting Definitions\n\n1. **Odd Integer**: \n   - An integer \( n \) is called odd if it can be written in the form \( n = 2k + 1 \), where \( k \) is an integer.\n   \n2. **Even Integer**: \n   - An integer \( m \) is called even if it can be written in the form \( m = 2k \), where \( k \) is an integer.\n\n3. **Sum**: \n   - The sum of two integers \( a \) and \( b \) is defined as their arithmetic addition, i.e., \( a + b \).\n\n### Step 2: Eliciting Relevant Premises\n\nThe following premises are implicit behind the statement:\n\n1. **Premise 1 (P1)**: An odd integer can be expressed as \( 2k + 1 \), where \( k \) is any integer.\n2. **Premise 2 (P2)**: The sum of two integers is another integer.\n3. **Premise 3 (P3)**: The form of an even integer is \( 2m \), where \( m \) is any integer.\n4. **Premise 4 (P4)**: Arithmetic operations (such as addition) are closed under integers.\n\n### Step 3: Establishing the Soundness of Each Premise and Definition\n\n- **P1 (Odd Integer Definition)**: This is a standard definition in number theory and is universally accepted. Sound.\n- **P2 (Sum of Integers)**: The addition of two integers results in another integer, which is a property of integers under addition. Sound.\n- **P3 (Even Integer Definition)**: This is the definition of even integers in number theory. Sound.\n- **P4 (Closure under Addition)**: Integers are closed under addition, meaning adding any two integers results in another integer. Sound.\n\n### Step 4: Building a Granular Syllogistic Inference\n\nLet the two odd integers be \( a \) and \( b \). By definition of odd numbers:\n- \( a = 2k_1 + 1 \), where \( k_1 \) is an integer.\n- \( b = 2k_2 + 1 \), where \( k_2 \) is an integer.\n\nNow, consider the sum \( a + b \):\n\[\na + b = (2k_1 + 1) + (2k_2 + 1) = 2k_1 + 2k_2 + 2 = 2(k_1 + k_2 + 1)\n\]\nThus, the sum of two odd integers is \( 2(k_1 + k_2 + 1) \), which is an even number by definition (since it is divisible by 2).\n\n### Step 5: Final Assessment\n\nThe inference shows that the sum of two odd integers always results in an even integer. Thus, \( p_i \) (\"The sum of two odd integers is always even\") is **entailed** by the premises and definitions, and the statement is **true**.",
+            },
+            {
+                "user_prompt": "Is it true that the square of an integer is always congruent to 0 or 1 modulo 3?",
+                "template_variables": {
+                    "p_i": "The square of an integer is always congruent to 0 or 1 modulo 3."
+                },
+                "answer": "Let's verify the statement \( p_i \): \"The square of an integer is always congruent to 0 or 1 modulo 3,\" by following the requested steps.\n\n### Step 1: Eliciting Definitions\n\n1. **Integer**: \n   - An integer is any whole number, positive, negative, or zero, denoted by \( \mathbb{Z} \).\n\n2. **Square of an Integer**: \n   - The square of an integer \( n \) is \( n^2 \), which is the result of multiplying \( n \) by itself: \( n^2 = n \times n \).\n\n3. **Congruence Modulo 3**: \n   - For integers \( a \) and \( b \), we say \( a \equiv b \mod 3 \) if \( a - b \) is divisible by 3. In other words, \( a \) and \( b \) have the same remainder when divided by 3.\n\n### Step 2: Eliciting Relevant Premises\n\nThe following premises are implicit behind the statement:\n\n1. **Premise 1 (P1)**: Any integer \( n \) can be written in one of three forms when considered modulo 3: \( n \equiv 0 \mod 3 \), \( n \equiv 1 \mod 3 \), or \( n \equiv 2 \mod 3 \).\n2. **Premise 2 (P2)**: The square of an integer \( n \), denoted \( n^2 \), is the product of \( n \) with itself.\n3. **Premise 3 (P3)**: Arithmetic operations such as squaring and modular reduction are well-defined operations on integers.\n4. **Premise 4 (P4)**: Modular arithmetic allows squaring to be performed before reducing modulo \( 3 \), i.e., \( n^2 \mod 3 = (n \mod 3)^2 \mod 3 \).\n\n### Step 3: Establishing the Soundness of Each Premise and Definition\n\n- **P1 (Integer forms mod 3)**: Every integer, when divided by 3, leaves a remainder of 0, 1, or 2. This is based on the division algorithm and is a sound and universally accepted premise.\n- **P2 (Squaring an Integer)**: The definition of squaring is well-founded in arithmetic. Sound.\n- **P3 (Operations under Integers)**: Arithmetic operations (addition, multiplication, and squaring) and modular reduction are well-defined over the set of integers. Sound.\n- **P4 (Modular Arithmetic Rule)**: The rule \( n^2 \mod 3 = (n \mod 3)^2 \mod 3 \) follows directly from the properties of modular arithmetic. Sound.\n\n### Step 4: Building a Granular Syllogistic Inference\n\nWe need to verify the square of any integer \( n \) is congruent to either 0 or 1 modulo 3. Based on **P1**, we know that any integer \( n \) can be congruent to one of the following values modulo 3:\n\n#### Case 1: \( n \equiv 0 \mod 3 \)\n- If \( n \equiv 0 \mod 3 \), then \( n^2 = 0^2 = 0 \).\n- Therefore, \( n^2 \equiv 0 \mod 3 \).\n\n#### Case 2: \( n \equiv 1 \mod 3 \)\n- If \( n \equiv 1 \mod 3 \), then \( n^2 = 1^2 = 1 \).\n- Therefore, \( n^2 \equiv 1 \mod 3 \).\n\n#### Case 3: \( n \equiv 2 \mod 3 \)\n- If \( n \equiv 2 \mod 3 \), then \( n^2 = 2^2 = 4 \).\n- Now reduce \( 4 \mod 3 \): \( 4 \equiv 1 \mod 3 \).\n- Therefore, \( n^2 \equiv 1 \mod 3 \).\n\n### Step 5: Final Assessment\n\nIn all cases, the square of an integer is congruent to either 0 or 1 modulo 3:\n- \( n^2 \equiv 0 \mod 3 \) if \( n \equiv 0 \mod 3 \),\n- \( n^2 \equiv 1 \mod 3 \) if \( n \equiv 1 \mod 3 \),\n- \( n^2 \equiv 1 \mod 3 \) if \( n \equiv 2 \mod 3 \).\n\nThus, \( p_i \) (\"The square of an integer is always congruent to 0 or 1 modulo 3\") is **entailed** by the premises and definitions, and the statement is **true**.",
+            },
+        ],
+        "location": {
+            "module_path": os.path.join(PROMPT_TACTICS_DIR, 'statement_verification.py'),
+            "class_name": "StatementVerifier",
+        },
     },
-    # STATEMENT_VERIFICATION_LABEL: {
-    #     "description": "Verify if a given statement is logically correct based on its premises and definitions.",
-    #     "prompt": "Given a statement p_i, verify if the statement is correct by eliciting definitions for all terms used, eliciting relevant premises, and building a granular syllogistic inference.",
-    #     "examples": [
-    #         {
-    #             "task": "Verify the statement 'The sum of two odd integers is always even'.",
-    #             "answer": "The statement is correct. Let two odd integers be represented as 2a + 1 and 2b + 1, where a and b are integers. Their sum is (2a + 1) + (2b + 1) = 2(a + b + 1), which is even because it is divisible by 2."
-    #         }
-    #     ],
-    # },
     # PROOF_LABEL: {
     #     "description": "Construct a proof to determine if a given statement is true or false.",
     #     "prompt": "Given a statement p_i, build a proof by eliciting definitions, relevant premises, and constructing a granular proof step-by-step.",
@@ -198,6 +208,14 @@ TACTICS_DATA = {
     #     #     }
     #     # ],
     # }
+    CUSTOM_PROMPT_LABEL: {
+        "description": "",
+        "tactic_prompt": "{user_prompt}",
+        "template_variables": [
+            "user_prompt"
+        ],
+        "examples": [],
+    },
 }
 
  
