@@ -106,7 +106,7 @@ TACTICS_DATA = {
         },
     },
     CUSTOM_PROMPT_LABEL: {
-        "description": "Prompts the LLM (having access to the knowledge base KB) with a custom question. Should be used for only if no standard tactic can be used instead.",
+        "description": "Prompts the LLM (having access to the knowledge base KB) with a custom question. Should be used only if no standard tactic can be used instead.",
         "tactic_prompt_template": "{custom_prompt}",
         "template_variables": [
             "custom_prompt"
