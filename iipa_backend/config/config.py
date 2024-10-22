@@ -61,7 +61,7 @@ ASSUMPTIONS_EXPANSION_LABEL = 'assumptions_expansion'
 ENTAILMENT_VERIFICATION_LABEL = 'entailment_verification'
 STATEMENT_VERIFICATION_LABEL = 'statement_verification'
 PROOF_LABEL = 'proof'
-PROOF_WITHIN_CONTEXT_LABEL = 'proof_within_context'
+PROOF_IN_CONTEXT_LABEL = 'proof_IN_context'
 ADD_CONTEXT_LABEL = 'add_context'
 ADD_STATEMENT_LABEL = 'add_statement'
 RETRIEVE_PREMISES_LABEL = 'retrieve_premises'
@@ -71,6 +71,7 @@ ACTIVE_TACTICS = [
     ASSUMPTIONS_EXPANSION_LABEL,
     ENTAILMENT_VERIFICATION_LABEL,
     PROOF_LABEL,
+    PROOF_IN_CONTEXT_LABEL,
     STATEMENT_VERIFICATION_LABEL,
 ]
 
@@ -152,6 +153,28 @@ TACTICS_DATA = {
             "class_name": "Prover",
         }
     },
+    PROOF_IN_CONTEXT_LABEL: {
+        "description": "Constructs a proof for a goal statement given a set of premises in a context.",
+        "tactic_prompt_template": "Given a statement p_i and statements in the context P_i, build a proof if p_i is true or false, by formally:\n-Building a proof strategy outline between the set of premises P and the goal statement p_i.\n-Build a granular, step-wise, one step at a time proof based on the strategy outline.\n-Return a final assessment if p_i is entailed by the proof.\n\np_i: {p_i}\nP_i: {P_i}",
+        "template_variables": [
+            "p_i",
+            "P_i",
+        ],
+        "examples": [
+            {
+                "user_prompt": "Given the context 'All prime numbers greater than 2 are odd' and '5 is a prime number', prove that '5 is odd'.",
+                "template_variables": {
+                    "p_i": "5 is odd",
+                    "P_i": "['All prime numbers greater than 2 are odd', '5 is a prime number']",
+                },
+                "answer": "To determine whether the statement \( p_i \) (\"5 is odd\") is true, given the context \( P_i \) (the set of premises), we will build a proof strategy outline and then work through the steps formally.\n\n### 1. **Proof Strategy Outline**:\n\n- **Goal**: Prove that \( p_i \) (\"5 is odd\") is true or false.\n- **Premises (P_i)**:\n  1. \"All prime numbers greater than 2 are odd.\"\n  2. \"5 is a prime number.\"\n\n- **Strategy**:\n  - We need to verify that 5 is indeed an odd number using the premises.\n  - According to premise 2, 5 is a prime number.\n  - According to premise 1, all prime numbers greater than 2 are odd.\n  - Since 5 is greater than 2 and is prime, it follows from premise 1 that 5 is odd.\n  - We will confirm whether the logic is sound step by step.\n\n### 2. **Granular, Step-wise Proof**:\n\n**Step 1**: Start with the first premise.\n- Premise 1 states: \"All prime numbers greater than 2 are odd.\"\n- This means any number greater than 2, which is prime, must be an odd number.\n\n**Step 2**: Move to the second premise.\n- Premise 2 states: \"5 is a prime number.\"\n- Therefore, 5 is indeed classified as a prime number.\n\n**Step 3**: Apply the rule from premise 1.\n- From premise 1, we know that all prime numbers greater than 2 are odd.\n- Since 5 is greater than 2 and is a prime number (by premise 2), we can conclude that 5 is odd based on premise 1.\n\n### 3. **Final Assessment**:\n- Based on the two premises provided, we have followed the logic step by step and conclude that the statement \( p_i \) (\"5 is odd\") is **true**.\n\nThus, the statement \"5 is odd\" is **entailed** by the proof and the premises.",
+            },
+        ],
+        "location": {
+            "module_path": os.path.join(PROMPT_TACTICS_DIR, 'proof_in_context.py'),
+            "class_name": "ProverInContext",
+        },
+    },
     STATEMENT_VERIFICATION_LABEL: {
         "description": "Verifies if a given statement p_i is correct.",
         "tactic_prompt_template": "Given a statement p_i verify if the statement is correct by formally:\n-Eliciting definitions for all terms used in p_i.\n-Eliciting all relevant premises behind p_i.\n-Establishing the soundness of each premise and definition.\n-Building a granular syllogistic inference between the set of premises and the statement p_i.\n-Return a final assessment if p_i is entailed by the premises and definitions.\n\np_i: {p_i}",
@@ -179,16 +202,6 @@ TACTICS_DATA = {
             "class_name": "StatementVerifier",
         },
     },
-    # PROOF_WITHIN_CONTEXT_LABEL: {
-    #     "description": "Construct a proof for a goal statement given a set of premises in a context.",
-    #     "prompt": "Given a goal statement p_i and context P, build a proof by outlining a strategy and executing a step-wise proof based on the premises in the context.",
-    #     # "examples": [
-    #     #     {
-    #     #         "task": "Given the context 'All prime numbers greater than 2 are odd' and '5 is a prime number', prove that '5 is odd'.",
-    #     #         "answer": "Premises: (1) All prime numbers greater than 2 are odd, (2) 5 is a prime number, (3) 5 > 2. Proof: From (1) and (3), we conclude that 5 is odd."
-    #     #     }
-    #     # ],
-    # },
     # ADD_CONTEXT_LABEL: {
     #     "description": "Add the previous context to the knowledge base.",
     #     "prompt": "Add the current proof context to the knowledge base for future reference.",
@@ -220,7 +233,7 @@ TACTICS_DATA = {
     #     # ],
     # }
     CUSTOM_PROMPT_LABEL: {
-        "description": "",
+        "description": "Solve this equation: 2x+4=10.",
         "tactic_prompt": "{user_prompt}",
         "template_variables": [
             "user_prompt"

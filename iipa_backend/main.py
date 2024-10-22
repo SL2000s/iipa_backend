@@ -53,12 +53,15 @@ if __name__ == '__main__':      # TODO: remove
         prompt='If x=1, is 2x=2?',
     )
     statement_verification_prompt = Prompt(
-        prompt='Is it true that the square of an integer is always congruent to 0 or 1 modulo 3?'
+        prompt='Is it true that the square of an integer is always congruent to 0 or 1 modulo 3?',
     )
     proof_prompt = Prompt(
-        prompt='Prove that a^2 + b^2 = c^2 for a right triangle with legs a and b, and hypothenuse c.'
+        prompt='Prove that a^2 + b^2 = c^2 for a right triangle with legs a and b, and hypothenuse c.',
+    )
+    proof_in_context = Prompt(
+        prompt='Given the statements "A prime number is only divisible by 1 and itself", and "9 is divisible by 3", prove "9 is not a prime number."',
     )
 
     import asyncio
-    ans = asyncio.run(submit_prompt(proof_prompt))
+    ans = asyncio.run(submit_prompt(proof_in_context))
     print(ans)
