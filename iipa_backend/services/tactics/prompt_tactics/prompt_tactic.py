@@ -5,9 +5,7 @@ from iipa_backend.config.config import (
     PROMPT2TEMPLATE_VARIABLES_TEMPLATE,
 )
 from iipa_backend.models.prompt import Prompt
-from iipa_backend.services.prompt.llm_quest import (
-    llm_quest,
-)
+from iipa_backend.services.prompt.llm_quest import llm_quest
 from iipa_backend.services.tactics.tactic import Tactic
 
 
