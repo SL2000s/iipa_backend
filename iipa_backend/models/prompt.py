@@ -8,7 +8,7 @@ class Prompt(BaseModel):
     prompt: str
     history: List[Dict[str, str]] = Field(default_factory=list)
     prompt_template: str = Field(default=PROMPT_WITH_HISTORY_TEMPLATE)
-    kb_label: Optional[str]
+    kb_label: Optional[str] = Field(default=None)
 
     def history_str(self):
         history_strs = []
