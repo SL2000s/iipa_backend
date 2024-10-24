@@ -5,7 +5,7 @@ from iipa_backend.config.config import (
     PROMPT2TEMPLATE_VARIABLES_TEMPLATE,
 )
 from iipa_backend.models.prompt import Prompt
-from iipa_backend.services.prompt.llm_quest import llm_quest
+from iipa_backend.services.prompt.llm_quest import llm_quest, kb_quest
 from iipa_backend.services.tactics.tactic import Tactic
 
 
@@ -32,10 +32,10 @@ class PromptTactic(Tactic):
         examples_str = '\n\n'.join(example_strs)
         return examples_str
 
-    async def perform_tactic(self, user_prompt: Prompt):
+    async def perform_tactic(self, user_prompt: Prompt, kb_label: str):
         template_variables = await self.user_prompt2template_variables(user_prompt)
         prompt = self.prompt_template.format(**template_variables)
-        llm_ans = await llm_quest(prompt)
+        llm_ans = await kb_quest(prompt, kb_label)
         return llm_ans
 
     async def user_prompt2template_variables(self, user_prompt: Prompt):

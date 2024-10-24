@@ -1,7 +1,16 @@
 from dotenv import load_dotenv
+from llama_index.core import (
+    load_index_from_storage,
+    Settings,
+    StorageContext,
+)
+from llama_index.embeddings.azure_openai import AzureOpenAIEmbedding
+from llama_index.llms.azure_openai import AzureOpenAI
 import logging
 import os
 import re
+
+
 
 from iipa_backend.config._prompts import(
     EXAMPLE_NL2TACTIC_TEMPLATE,
@@ -24,6 +33,36 @@ PROMPT_TACTICS_DIR = os.path.join(TACTICS_DIR, 'prompt_tactics')
 LOG_DIR = os.path.join(PKG_ROOT, 'logs')
 
 
+
+
+# KB's and LlamaIndex indices
+LLM = AzureOpenAI(
+    model=os.getenv('MODEL_NAME'),
+    deployment_name=os.getenv('DEPLOYMENT_NAME'),
+    api_key=os.getenv('OPENAI_API_KEY'),
+    azure_endpoint=os.getenv('AZURE_ENDPOINT'),
+    api_version=os.getenv('OPENAI_API_VERSION'),
+)
+EMBED_MODEL = AzureOpenAIEmbedding(
+    model=os.getenv('EMBEDDING_MODEL'),
+    deployment_name=os.getenv('EMBEDDING_DEPLOYMENT'),
+    api_key=os.getenv('OPENAI_API_KEY'),
+    azure_endpoint=os.getenv('AZURE_ENDPOINT'),
+    api_version=os.getenv('OPENAI_API_VERSION'),
+)
+Settings.llm = LLM
+Settings.embed_model = EMBED_MODEL
+LM_THEORY_LABEL = 'lm_theory'
+INDICES_PATHS = {
+    LM_THEORY_LABEL: os.getenv('LM_THEORY_INDEX_PATH'),
+}
+INDICES = {}
+for kb_label, persist_dir in INDICES_PATHS.items():
+    storage_context = StorageContext.from_defaults(persist_dir=persist_dir)
+    index = load_index_from_storage(storage_context)
+    INDICES[kb_label] = index
+
+
 # Configure logging
 os.makedirs(LOG_DIR, exist_ok=True)
 LOG_FILE_PATH = os.path.join(LOG_DIR, 'iipa_backend.log')
@@ -43,11 +82,11 @@ logging.getLogger('openai').setLevel(logging.WARNING)
 
 # Azure OpenAI API parameters
 PROMPT_TEMPLATE_FORMAT = 'jinja2'
-OPENAI_MODEL_NAME = 'gpt-4o'
+OPENAI_MODEL_NAME = os.getenv('MODEL_NAME', 'gpt-4o')
 OPENAI_TEMPERATURE = 1e-16
-OPENAI_API_TYPE = 'azure'
-OPENAI_API_VERSION = '2024-02-01'
-OPENAI_DEPLOYMENT_NAME = 'lunar-chatgpt-4o'
+OPENAI_API_TYPE = os.getenv('OPENAI_API_TYPE', 'azure')
+OPENAI_API_VERSION = os.getenv('OPENAI_API_VERSION', '2024-02-01')
+OPENAI_DEPLOYMENT_NAME = os.getenv('DEPLOYMENT_NAME')
 OPENAI_TOP_P = 1e-16
 OPENAI_SEED = 1234
 

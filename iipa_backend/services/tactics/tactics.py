@@ -66,10 +66,10 @@ class Tactics:
     def label2tactic_instance(self, label):
         return self.label2tactic_instance_dict.get(label)
 
-    async def perform_tactic_by_label(self, label, user_prompt: Prompt):
+    async def perform_tactic_by_label(self, label, user_prompt: Prompt, kb_label: str):
         tactic = self.label2tactic_instance(label)
         if tactic:
-            ans = await tactic.perform_tactic(user_prompt)
+            ans = await tactic.perform_tactic(user_prompt, kb_label)
             return ans
         return 'Failed to find a suiting tactic'  # TODO: add proper logging and raise error
 
@@ -82,9 +82,9 @@ class Tactics:
         ans = await llm_quest(nl2tactic_prompt)
         return ans
 
-    async def process_user_prompt(self, user_prompt: Prompt):
+    async def process_user_prompt(self, user_prompt: Prompt, kb_label: str):
         # return await llm_quest(user_prompt.prompt_with_history())
         tactic_label = await self.nl2tactic(user_prompt)
         # return tactic
-        ans = await self.perform_tactic_by_label(tactic_label, user_prompt)
+        ans = await self.perform_tactic_by_label(tactic_label, user_prompt, kb_label)
         return ans

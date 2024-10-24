@@ -15,6 +15,7 @@ from iipa_backend.config.config import (
     OPENAI_TOP_P,
     OPENAI_SEED,
     CODE_PATTERN,
+    INDICES,
 )
 
 
@@ -49,6 +50,26 @@ async def llm_quest(prompt: str, extract_code: bool = False):
     logger.debug(f'LLM responded with this answer:\n{llm_ans}')
     llm_ans_post_processed = post_process_llm_ans(llm_ans, extract_code)
     logger.debug(f'Returning this post-processed LLM answer:\n{llm_ans_post_processed}')
+    return llm_ans_post_processed
+
+
+async def _index_quest(query: str, kb_label: str):
+    index = INDICES.get(kb_label)
+    if index:
+        query_engine = index.as_query_engine()
+        response = query_engine.query(query).response
+    else:
+        response = 'ERROR: could not find KB'                   # TODO: handle more properly
+    return response
+
+
+
+async def kb_quest(prompt: str, kb_label: str, extract_code: bool = False):
+    logger.debug(f"Requesting KB '{kb_label}' with this prompt:\n{prompt}")
+    llm_ans = await _index_quest(prompt, kb_label)
+    logger.debug(f'KB responded with this answer:\n{llm_ans}')
+    llm_ans_post_processed = post_process_llm_ans(llm_ans, extract_code)
+    logger.debug(f'Returning this post-processed KB answer:\n{llm_ans_post_processed}')
     return llm_ans_post_processed
 
 

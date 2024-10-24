@@ -5,6 +5,7 @@ from types import SimpleNamespace
 
 from iipa_backend.controllers.tactic_controller import TacticController
 from iipa_backend.models.prompt import Prompt
+from iipa_backend.config.config import LM_THEORY_LABEL
 
 
 app = FastAPI()
@@ -30,9 +31,9 @@ async def root():
 
 
 @app.post("/submit_prompt")
-async def submit_prompt(prompt: Prompt):
+async def submit_prompt(prompt: Prompt, kb_label: str = LM_THEORY_LABEL):
     """Submit a prompt and get an answer."""
-    answer = await context.tactic_controller.process_user_prompt(prompt)
+    answer = await context.tactic_controller.process_user_prompt(prompt, kb_label)
     return {"answer": answer}
 
 
@@ -67,15 +68,19 @@ if __name__ == '__main__':      # TODO: remove
     custom_prompt = Prompt(
         # prompt='Solve x^2=4',
         # prompt='Who found out that a^2 + b^2 = c^2',
-        prompt='Explain more',
-        history=[
-            {
-                'prompt': 'What is Switzerland?',
-                'answer': 'Switzerland is a country in Europe.',
-            },
-        ],
+        # prompt='Explain more',
+        # history=[
+        #     {
+        #         'prompt': 'What is Switzerland?',
+        #         'answer': 'Switzerland is a country in Europe.',
+        #     },
+        # ],
+        prompt='What does theorem 2 say?'
     )
 
     import asyncio
     ans = asyncio.run(submit_prompt(custom_prompt))
+    print(123321)
     print(ans)
+    print(type(ans))
+    print(dir(ans))
