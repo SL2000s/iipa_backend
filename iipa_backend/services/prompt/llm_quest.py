@@ -59,7 +59,7 @@ async def _index_quest(query: str, kb_label: str):
         query_engine = index.as_query_engine()
         response = query_engine.query(query).response
     else:
-        response = 'ERROR: could not find KB'                   # TODO: handle more properly
+        response = f"ERROR: could not find KB '{kb_label}'"                   # TODO: handle more properly
     return response
 
 
