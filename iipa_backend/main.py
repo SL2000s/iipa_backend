@@ -31,9 +31,9 @@ async def root():
 
 
 @app.post("/submit_prompt")
-async def submit_prompt(prompt: Prompt, kb_label: str = LM_THEORY_LABEL):
+async def submit_prompt(prompt: Prompt):
     """Submit a prompt and get an answer."""
-    answer = await context.tactic_controller.process_user_prompt(prompt, kb_label)
+    answer = await context.tactic_controller.process_user_prompt(prompt)
     return {"answer": answer}
 
 
@@ -80,7 +80,4 @@ if __name__ == '__main__':      # TODO: remove
 
     import asyncio
     ans = asyncio.run(submit_prompt(custom_prompt))
-    print(123321)
     print(ans)
-    print(type(ans))
-    print(dir(ans))

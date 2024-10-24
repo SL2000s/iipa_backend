@@ -32,10 +32,10 @@ class PromptTactic(Tactic):
         examples_str = '\n\n'.join(example_strs)
         return examples_str
 
-    async def perform_tactic(self, user_prompt: Prompt, kb_label: str):
+    async def perform_tactic(self, user_prompt: Prompt):
         template_variables = await self.user_prompt2template_variables(user_prompt)
         prompt = self.prompt_template.format(**template_variables)
-        llm_ans = await kb_quest(prompt, kb_label)
+        llm_ans = await kb_quest(prompt, user_prompt.kb_label)
         return llm_ans
 
     async def user_prompt2template_variables(self, user_prompt: Prompt):

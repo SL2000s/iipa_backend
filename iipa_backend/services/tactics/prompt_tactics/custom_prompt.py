@@ -8,6 +8,6 @@ class CustomPrompt(PromptTactic):
     def __init__(self, label=CUSTOM_PROMPT_LABEL):
         super().__init__(label)
 
-    async def perform_tactic(self, user_prompt: Prompt, kb_label: str):
-        llm_ans = await kb_quest(user_prompt.prompt_with_history(), kb_label)
+    async def perform_tactic(self, user_prompt: Prompt):
+        llm_ans = await kb_quest(user_prompt.prompt_with_history(), user_prompt.kb_label)
         return llm_ans
