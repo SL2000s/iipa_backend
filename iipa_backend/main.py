@@ -5,7 +5,6 @@ from types import SimpleNamespace
 
 from iipa_backend.controllers.tactic_controller import TacticController
 from iipa_backend.models.prompt import Prompt
-from iipa_backend.config.config import LM_THEORY_LABEL
 
 
 app = FastAPI()
@@ -77,7 +76,17 @@ if __name__ == '__main__':      # TODO: remove
         # ],
         prompt='What does theorem 2 say?'
     )
+    premises_retrieval_prompt_kb = Prompt(
+        # prompt='What are the premises behind Theorem 6?',
+        # prompt='''Create a list of all premises related to Theorem 1''',
+        prompt='''Prove "Theorem 1"''',
+        kb_label='lm_theory'
+    )
 
     import asyncio
-    ans = asyncio.run(submit_prompt(custom_prompt))
+    # ans = asyncio.run(submit_prompt(premises_retrieval_prompt_kb))
+    # print(ans)
+
+    from iipa_backend.services.prompt.llm_quest import kb_quest
+    ans = asyncio.run(kb_quest(premises_retrieval_prompt_kb.prompt_with_history(), 'lm_theory'))
     print(ans)
