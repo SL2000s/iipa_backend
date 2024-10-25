@@ -9,6 +9,7 @@ from llama_index.llms.azure_openai import AzureOpenAI
 import logging
 import os
 import re
+import json
 
 
 
@@ -19,6 +20,7 @@ from iipa_backend.config._prompts import(
     PROMPT_WITH_HISTORY_TEMPLATE,
     EXAMPLE_PROMPT2TEMPLATE_VARIABLES_TEMPLATE,
     PROMPT2TEMPLATE_VARIABLES_TEMPLATE,
+    INDEX_QUERY_PROMPT_TEMPLATE,
 )
 
 
@@ -31,8 +33,6 @@ PKG_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__
 TACTICS_DIR = os.path.join(SRC_ROOT, 'services', 'tactics')
 PROMPT_TACTICS_DIR = os.path.join(TACTICS_DIR, 'prompt_tactics')
 LOG_DIR = os.path.join(PKG_ROOT, 'logs')
-
-
 
 
 # KB's and LlamaIndex indices
@@ -53,6 +53,18 @@ EMBED_MODEL = AzureOpenAIEmbedding(
 Settings.llm = LLM
 Settings.embed_model = EMBED_MODEL
 LM_THEORY_LABEL = 'lm_theory'
+
+INDICES_JSON_PATHS = {
+    LM_THEORY_LABEL: os.getenv('LM_THEORY_INDEX_JSON_PATH'),
+}
+INDEX_JSONS = {}
+INDICES_LABEL2DOC = {}
+for kb_label, json_path in INDICES_JSON_PATHS.items():
+    with open(json_path, 'r') as f:
+        json_dict = json.load(f)
+        INDEX_JSONS[kb_label] = json_dict
+        label2doc = {d['metadata']['Statement label']: d for d in json_dict}
+        INDICES_LABEL2DOC[kb_label] = label2doc
 INDICES_PATHS = {
     LM_THEORY_LABEL: os.getenv('LM_THEORY_INDEX_PATH'),
 }
@@ -93,6 +105,21 @@ OPENAI_SEED = 1234
 
 # Regex patterns
 CODE_PATTERN = re.compile(r'```.*\n(.*?)\n```', re.DOTALL)
+STATEMENT_LABEL_PATTERN_STRS = {
+    'Theorem': r'\b(Theorem|theorem|Thm|thm|Thm\.|thm\.)\s*(\d+)\b',
+    'Definition': r'\b(Definition|definition|Def|def|Def\.|def\.)\s*(\d+)\b',
+    'Axiom': r'\b(Axiom|axiom)\s*(\d+)\b',
+    'Corollary': r'\b(Corollary|corollary|Cor|cor|Cor\.|cor\.)\s*(\d+)\b',
+    'Lemma': r'\b(Lemma|lemma)\s*(\d+)\b',
+}
+STATEMENT_LABEL_PATTERNS = {s: re.compile(p) for s, p in STATEMENT_LABEL_PATTERN_STRS.items()}
+
+
+# RAG
+STATEMENT_LABEL_TEMPLATE = '{statement_type} {statement_type_nr}'
+DEFAULT_TEXT_NODE_TMPL = '{metadata_str}\n\n{content}'      # Same as from llamaindex.core.schema
+DEFAULT_METADATA_TMPL = '{key}: {value}'                    # Same as from llamaindex.core.schema
+METADATA_SEPARATOR = '\n'
 
 
 # Tactics

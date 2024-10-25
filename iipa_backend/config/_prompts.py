@@ -69,3 +69,20 @@ TEMPLATE VARIABLES: {template_variables}
 {examples}
 
 USER INSTRUCTION: {user_prompt}"""
+
+
+
+#############################
+######## INDEX QUERY ########
+#############################
+INDEX_QUERY_PROMPT_TEMPLATE = (
+    "Context information is below.\n"
+    "---------------------\n"
+    "{context_str}\n"
+    "---------------------\n"
+    # "Given the context information and not prior knowledge, "
+    "Given the context information, "
+    "answer the query.\n"
+    "Query: {query_str}\n"
+    "Answer: "
+)  # from llama_index
