@@ -43,8 +43,10 @@ class PromptTactic(Tactic):
             prompt_template=self.prompt_template,
             template_variables=self.template_variables,
             examples=self.examples_template_variables_str,
-            user_prompt=user_prompt.prompt,                             # TODO: add history
+            # user_prompt=user_prompt.prompt,
+            user_prompt=user_prompt.prompt_with_history(),
         )
         llm_ans = await llm_quest(prompt, extract_code=True)
+        llm_ans = llm_ans.replace('\\', '\\\\').replace('"', '\"')
         template_variables = json.loads(llm_ans)
         return template_variables
