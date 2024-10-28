@@ -65,6 +65,7 @@ for kb_label, json_path in INDICES_JSON_PATHS.items():
         INDEX_JSONS[kb_label] = json_dict
         label2doc = {d['metadata']['Statement label']: d for d in json_dict}
         INDICES_LABEL2DOC[kb_label] = label2doc
+
 INDICES_PATHS = {
     LM_THEORY_LABEL: os.getenv('LM_THEORY_INDEX_PATH'),
 }
@@ -73,6 +74,15 @@ for kb_label, persist_dir in INDICES_PATHS.items():
     storage_context = StorageContext.from_defaults(persist_dir=persist_dir)
     index = load_index_from_storage(storage_context)
     INDICES[kb_label] = index
+
+LATEX_DEFS_PATHS = {
+    LM_THEORY_LABEL: os.getenv('LM_THEORY_LATEX_DEFS_JSON_PATH')
+}
+LATEX_DEFS = {}
+for kb_label, json_path in LATEX_DEFS_PATHS.items():
+    with open(json_path, 'r') as f:
+        json_dict = json.load(f)
+        LATEX_DEFS[kb_label] = json_dict
 
 
 # Configure logging

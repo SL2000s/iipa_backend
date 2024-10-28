@@ -33,7 +33,7 @@ async def root():
 async def submit_prompt(prompt: Prompt):
     """Submit a prompt and get an answer."""
     answer = await context.tactic_controller.process_user_prompt(prompt)
-    return {"answer": answer}
+    return {"answer": answer.answer, "latex_macros": answer.latex_macros}  # TODO: is there a better way of doing this?
 
 
 if __name__ == '__main__':      # TODO: remove

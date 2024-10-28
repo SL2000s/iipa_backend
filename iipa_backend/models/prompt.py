@@ -4,6 +4,11 @@ from typing import List, Dict, Optional
 from iipa_backend.config.config import PROMPT_WITH_HISTORY_TEMPLATE
 
 
+class PromptAnswer(BaseModel):
+    answer: str
+    latex_macros: Optional[Dict[str, str]] = Field(default_factory=dict)
+
+
 class Prompt(BaseModel):
     prompt: str
     history: List[Dict[str, str]] = Field(default_factory=list)

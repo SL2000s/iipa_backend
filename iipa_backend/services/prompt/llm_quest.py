@@ -23,7 +23,9 @@ from iipa_backend.config.config import (
     DEFAULT_METADATA_TMPL,
     DEFAULT_TEXT_NODE_TMPL,
     INDEX_QUERY_PROMPT_TEMPLATE,
+    LATEX_DEFS,
 )
+from iipa_backend.models.prompt import PromptAnswer
 
 
 logger = logging.getLogger(__name__)
@@ -69,6 +71,7 @@ async def _index_aquest_with_statement_rag(
         metadata_template = DEFAULT_METADATA_TMPL,
         text_node_template = DEFAULT_TEXT_NODE_TMPL,
         index_query_prompt_template = INDEX_QUERY_PROMPT_TEMPLATE,
+        include_latex_macros = True,
     ):
     index = INDICES.get(kb_label)
     if not index:
@@ -85,7 +88,6 @@ async def _index_aquest_with_statement_rag(
             )
             if statement_label not in statement_labels:
                 statement_labels.append(statement_label)
-
     context_strs = []
     for statement_label in statement_labels:
         doc = indices_label2doc[kb_label][statement_label]
@@ -106,7 +108,14 @@ async def _index_aquest_with_statement_rag(
         query_str=query
     )
     response = await llm_quest(prompt)
-    return response
+    prompt_answer = PromptAnswer(answer=response)
+    if include_latex_macros:
+        statement_label2latex_defs = LATEX_DEFS.get(kb_label, {})
+        for statement_label in statement_labels:
+            statement_latex_defs = statement_label2latex_defs.get(statement_label, {})
+            statement_latex_macros = statement_latex_defs.get('macros', {})
+            prompt_answer.latex_macros.update(statement_latex_macros)
+    return prompt_answer
 
 
 async def _index_aquest(query: str, kb_label: str):
