@@ -11,7 +11,7 @@ class PromptAnswer(BaseModel):
 
 class Prompt(BaseModel):
     prompt: str
-    history: List[Dict[str, str]] = Field(default_factory=list)
+    history: List[Dict] = Field(default_factory=list)
     prompt_template: str = Field(default=PROMPT_WITH_HISTORY_TEMPLATE)
     kb_label: Optional[str] = Field(default=None)
 
