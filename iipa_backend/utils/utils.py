@@ -1,4 +1,6 @@
+import contextlib
 import importlib.util
+import io
 
 
 def get_class(module_path, class_name):
@@ -13,3 +15,10 @@ def instantiate_class(module_path, class_name):
     class_ = get_class(module_path, class_name)
     instance = class_()
     return instance
+
+def execute_code_str(code):
+    buffer = io.StringIO()
+    with contextlib.redirect_stdout(buffer):
+        exec(code)
+    output = buffer.getvalue()
+    return output

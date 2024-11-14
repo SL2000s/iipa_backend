@@ -114,7 +114,7 @@ OPENAI_SEED = 1234
 
 
 # Regex patterns
-CODE_PATTERN = re.compile(r'```.*\n(.*?)\n```', re.DOTALL)
+CODE_PATTERN = re.compile(r'```.*?\n(.*)\n```', re.DOTALL)
 STATEMENT_LABEL_PATTERN_STRS = {
     'Theorem': r'\b(Theorem|theorem|Thm|thm|Thm\.|thm\.)\s*(\d+)\b',
     'Definition': r'\b(Definition|definition|Def|def|Def\.|def\.)\s*(\d+)\b',
@@ -210,7 +210,7 @@ TACTICS_DATA = {
         ],
         "examples": [
 #             {
-#                 "user_prompt": "Verify that if x=1, then 2x=2.",
+#                 "user_prompt": "Verify empirically (with code) that if x=1, then 2x=2.",
 #                 "template_variables": {
 #                     "p_i": "If x=1, then 2x=2.",
 #                 },
@@ -229,7 +229,7 @@ TACTICS_DATA = {
 # ```"""
 #             },
             {
-                "user_prompt": "Verify the statement 'For any positive integer n, n^2 > 0'.",
+                "user_prompt": "Verify empirically that the statement p_i is true.\n\np_i: For any positive integer n, n^2 > 0.",
                 "template_variables": {
                     "p_i": "For any positive integer n, n^2 > 0.",
                 },
@@ -250,7 +250,7 @@ test_statement()
 ```"""
             },
             {
-                "user_prompt": "Verify that if x is even, then x + 1 is odd.",
+                "user_prompt": "Verify empirically, i.e. with code, that if x is even, then x + 1 is odd.",
                 "template_variables": {
                     "p_i": "If x is even, then x + 1 is odd.",
                 },

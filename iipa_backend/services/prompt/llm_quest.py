@@ -142,7 +142,7 @@ async def kb_quest(prompt: str, kb_label: str, extract_code: bool = False,
 
 
 def extract_llm_ans_code(llm_ans, code_pattern=CODE_PATTERN):
-    logger.debug(f'JSON post-processing this LLM answer:\n{llm_ans}')
+    logger.debug(f'Extracting code from this LLM answer:\n{llm_ans}')
     matches = code_pattern.findall(llm_ans)
     code = matches[0] if matches else llm_ans
     return code
