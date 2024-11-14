@@ -142,10 +142,12 @@ ADD_CONTEXT_LABEL = 'add_context'
 ADD_STATEMENT_LABEL = 'add_statement'
 PREMISES_RETRIEVAL_LABEL = 'premises_retrieval'
 CUSTOM_PROMPT_LABEL = 'custom_prompt'
+EMPIRICAL_VERIFICATION_LABEL = 'empirical_verification'
 
 ACTIVE_TACTICS = [
     ASSUMPTIONS_EXPANSION_LABEL,
     CUSTOM_PROMPT_LABEL,
+    EMPIRICAL_VERIFICATION_LABEL,
     ENTAILMENT_VERIFICATION_LABEL,
     PREMISES_RETRIEVAL_LABEL,
     PROOF_LABEL,
@@ -198,6 +200,86 @@ TACTICS_DATA = {
         "location": {
             "module_path": os.path.join(PROMPT_TACTICS_DIR, 'custom_prompt.py'),
             "class_name": "CustomPrompt",
+        },
+    },
+    EMPIRICAL_VERIFICATION_LABEL: {
+        "description": "Writes code and executes it to verify that verifies a statement p_i is logically consistent.",
+        "tactic_prompt_template": "Given a statement p_i write code that verifies the statement p_i. The code should be a Python script that tests the statement. The script should print one and only one line with either \"Test passed!\" if the test passed, or \"Test failed!\" if the test failed. Output nothing else than the code for the script.\n\np_i: {p_i}",
+        "template_variables": [
+            "p_i",
+        ],
+        "examples": [
+#             {
+#                 "user_prompt": "Verify that if x=1, then 2x=2.",
+#                 "template_variables": {
+#                     "p_i": "If x=1, then 2x=2.",
+#                 },
+#                 "answer": """```python
+# # Code to verify that if x = 1, then 2 * x = 2
+# def test_statement():
+#     x = 1
+#     expected_result = 2
+#     result = 2 * x
+#     if result == expected_result:
+#         print("Test passed!")
+#     else:
+#         print("Test failed!")
+
+# test_statement()
+# ```"""
+#             },
+            {
+                "user_prompt": "Verify the statement 'For any positive integer n, n^2 > 0'.",
+                "template_variables": {
+                    "p_i": "For any positive integer n, n^2 > 0.",
+                },
+                "answer": """```python
+import random
+
+# Code to verify that for any positive integer n, n^2 > 0
+def test_statement(nr_tests=100, max_n=10**4):
+    for _ in range(nr_tests):
+        n = random.randint(1, max_n)
+        result = n**2
+        if result <= 0:
+            print("Test failed!")
+            return
+    print("Test passed!")
+
+test_statement()
+```"""
+            },
+            {
+                "user_prompt": "Verify that if x is even, then x + 1 is odd.",
+                "template_variables": {
+                    "p_i": "If x is even, then x + 1 is odd.",
+                },
+                "answer": """```python
+import random
+                
+# Code to verify that if x is even, then x + 1 is odd
+def is_even(x):
+    return x % 2 == 0
+
+def is_odd(x):
+    return x % 2 != 0
+
+def test_statement(nr_tests=100, max_n=10**4):
+    for _ in range(nr_tests):
+        n = 2*random.randint(1, max_n//2)
+        assert is_even(n), f"Test setup failed: {n} should be even"
+        if not is_odd(n + 1):
+            print("Test failed!")
+            return
+    print("Test passed!")
+
+test_statement()
+```"""
+            },
+        ],
+        "location": {
+            "module_path": os.path.join(PROMPT_TACTICS_DIR, 'empirical_verification.py'),
+            "class_name": "EmpiricalVerifier",
         },
     },
     ENTAILMENT_VERIFICATION_LABEL: {
