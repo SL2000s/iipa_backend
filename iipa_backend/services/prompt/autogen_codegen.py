@@ -7,8 +7,9 @@ from iipa_backend.config.config import (
     OPENAI_API_TYPE,
     OPENAI_API_VERSION,
     OPENAI_DEPLOYMENT_NAME,
+    AUTOGEN_TMP_DIR,
 )
-from iipa_backend.utils.utils import a_capture_prints
+from iipa_backend.utils.utils import a_capture_prints, delete_directory
 
 
 async def a_generate_code(quest):
@@ -25,7 +26,7 @@ async def a_generate_code(quest):
         human_input_mode="NEVER",
         max_consecutive_auto_reply=10,
         is_termination_msg=lambda x: x.get("content", "").rstrip().endswith("TERMINATE"),
-        code_execution_config={"executor": autogen.coding.LocalCommandLineCodeExecutor(work_dir="coding")}
+        code_execution_config={"executor": autogen.coding.LocalCommandLineCodeExecutor(work_dir=AUTOGEN_TMP_DIR)}
     )
     chat_result = await a_capture_prints(
         lambda: user_proxy.a_initiate_chat(
@@ -33,4 +34,5 @@ async def a_generate_code(quest):
             message=quest,
         )
     )
+    delete_directory(AUTOGEN_TMP_DIR)
     return chat_result

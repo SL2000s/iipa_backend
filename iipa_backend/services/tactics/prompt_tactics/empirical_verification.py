@@ -1,21 +1,24 @@
 from iipa_backend.config.config import EMPIRICAL_VERIFICATION_LABEL
-from iipa_backend.services.prompt.llm_quest import extract_llm_ans_code
+# from iipa_backend.services.prompt.llm_quest import extract_llm_ans_code
 from iipa_backend.services.prompt.autogen_codegen import a_generate_code
 from iipa_backend.models.prompt import Prompt, PromptAnswer
 from iipa_backend.services.tactics.prompt_tactics.prompt_tactic import PromptTactic
-from iipa_backend.utils.utils import execute_code_str
+from iipa_backend.utils.utils import str2md
+# from iipa_backend.utils.utils import execute_code_str
 
 
 class EmpiricalVerifier(PromptTactic):
     def __init__(self, label=EMPIRICAL_VERIFICATION_LABEL):
         super().__init__(label)
 
-    async def perform_tactic(self, user_prompt: Prompt):
+    async def perform_tactic(self, user_prompt: Prompt, md_output: bool = True):
         prompt_answer = PromptAnswer()
         template_variables = await self.user_prompt2template_variables(user_prompt)
         prompt = self.prompt_template.format(**template_variables)
         llm_ans = await a_generate_code(prompt)
-        prompt_answer.answer = f"Internal AutoGen reasoning:\n{llm_ans}"
+        if md_output:
+            llm_ans = str2md(llm_ans).replace('>', '\>')
+        prompt_answer.answer = f"**Internal AutoGen reasoning**:\n\n{llm_ans}"
         return prompt_answer
         # llm_code_ans = await super().perform_tactic(user_prompt=user_prompt)
         # prompt_answer.latex_macros.update(llm_code_ans.latex_macros)

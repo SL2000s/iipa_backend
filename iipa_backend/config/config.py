@@ -30,6 +30,7 @@ load_dotenv()
 # Define paths
 SRC_ROOT = os.path.join(os.path.dirname(os.path.dirname(__file__)))
 PKG_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+AUTOGEN_TMP_DIR = os.path.join(PKG_ROOT, 'tmp_autogen')
 TACTICS_DIR = os.path.join(SRC_ROOT, 'services', 'tactics')
 PROMPT_TACTICS_DIR = os.path.join(TACTICS_DIR, 'prompt_tactics')
 LOG_DIR = os.path.join(PKG_ROOT, 'logs')
