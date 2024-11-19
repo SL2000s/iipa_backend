@@ -73,6 +73,16 @@ async def llm_quest(prompt: str, extract_code: bool = False):
     return llm_ans_post_processed
 
 
+def _statement_labels2latex_macros(statement_labels, kb_label):
+    latex_macros = {}
+    statement_label2latex_defs = LATEX_DEFS.get(kb_label, {})
+    for statement_label in statement_labels:
+        statement_latex_defs = statement_label2latex_defs.get(statement_label, {})
+        statement_latex_macros = statement_latex_defs.get('macros', {})
+        latex_macros.update(statement_latex_macros)
+    return latex_macros
+
+
 def append_prompt_context(
     query: str, kb_label: str,
     statement_patterns = STATEMENT_LABEL_PATTERNS,
@@ -117,22 +127,19 @@ def append_prompt_context(
         context_str=context_str,
         query_str=query
     )
-    return prompt, statement_labels
+    latex_macros = _statement_labels2latex_macros(statement_labels, kb_label)
+    return prompt, latex_macros
 
 
 async def _index_aquest_with_statement_rag(
     query: str, kb_label: str,
     include_latex_macros = True,
 ):
-    prompt, statement_labels = append_prompt_context(query, kb_label)
+    prompt, latex_macros = append_prompt_context(query, kb_label)
     response = await llm_quest(prompt)
     prompt_answer = PromptAnswer(answer=response)
     if include_latex_macros:
-        statement_label2latex_defs = LATEX_DEFS.get(kb_label, {})
-        for statement_label in statement_labels:
-            statement_latex_defs = statement_label2latex_defs.get(statement_label, {})
-            statement_latex_macros = statement_latex_defs.get('macros', {})
-            prompt_answer.latex_macros.update(statement_latex_macros)
+        prompt_answer.latex_macros.update(latex_macros)
     return prompt_answer
 
 
