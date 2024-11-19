@@ -158,7 +158,7 @@ ACTIVE_TACTICS = [
 TACTICS_DATA = {
     ASSUMPTIONS_EXPANSION_LABEL: {
         "description": "Expands the implied definitions and assumptions for a given statement.",
-        "tactic_prompt_template": "Given a statement p_i expand the implied definitions and assumptions by formally:\n-Eliciting definitions for all terms used in p_i.\n-Eliciting all known premises behind p_i.\n-Return a list with the definitions and premises.\n\np_i: {p_i}",
+        "tactic_prompt_template": "Given a statement p_i, expand the implied definitions and assumptions by formally:\n-Eliciting definitions for all terms used in p_i.\n-Eliciting all known premises behind p_i.\n-Return a list with the definitions and premises.\n\np_i: {p_i}",
         "template_variables": [
             "p_i",
         ],
@@ -204,7 +204,7 @@ TACTICS_DATA = {
     },
     EMPIRICAL_VERIFICATION_LABEL: {
         "description": "Writes code and executes it to verify that verifies a statement p_i is logically consistent.",
-        "tactic_prompt_template": "Given a statement p_i write code that verifies the statement p_i. The code should be a Python script that tests the statement. The script should print one and only one line with either \"Test passed!\" if the test passed, or \"Test failed!\" if the test failed. Output nothing else than the code for the script.\n\np_i: {p_i}",
+        "tactic_prompt_template": "Given a statement p_i, write code that verifies the statement p_i. The code should be a Python script that tests the statement. The script should print one and only one line with either \"Test passed!\" if the test passed, or \"Test failed!\" if the test failed. Output nothing else than the code for the script.\n\np_i: {p_i}",
         "template_variables": [
             "p_i",
         ],
@@ -284,7 +284,7 @@ test_statement()
     },
     ENTAILMENT_VERIFICATION_LABEL: {
         "description": "Verifies if the entailment between two statements p_i and p_j is logically consistent.",
-        "tactic_prompt_template": "Given two statements p_i and p_j verify if the entailment between the two statements are logically consistent and sound by formally:\n-Expanding the steps into granular operations and step-wise inference steps.\n-Elicit all supported premises and definitions.\n-For each step validate the consistency and correctness.\n-Return a final assessment if p_j is entailed by  p_i and the supporting proof.\n\np_i: {p_i}\np_j: {p_j}",
+        "tactic_prompt_template": "Given two statements p_i and p_j, verify if the entailment between the two statements are logically consistent and sound by formally:\n-Expanding the steps into granular operations and step-wise inference steps.\n-Elicit all supported premises and definitions.\n-For each step validate the consistency and correctness.\n-Return a final assessment if p_j is entailed by  p_i and the supporting proof.\n\np_i: {p_i}\np_j: {p_j}",
         "template_variables": [
             "p_i",
             "p_j",
@@ -334,7 +334,7 @@ test_statement()
     },
     PROOF_LABEL: {
         "description": "Constructs a proof to determine if a statements p_i is true or false.",
-        "tactic_prompt_template": "Given a statement p_i build a proof if p_i is true or false, by formally:\n-Eliciting definitions for all terms used in p_i.\n-Eliciting all relevant premises behind p_i.\n-Building a granular proof (one operation per step) between the set of premises and the statement p_i.\n-Return a final assessment if p_i is entailed by the premises and definitions and the proof.\n\np_i: {p_i}",
+        "tactic_prompt_template": "Given a statement p_i, build a proof if p_i is true or false, by formally:\n-Eliciting definitions for all terms used in p_i.\n-Eliciting all relevant premises behind p_i.\n-Building a granular proof (one operation per step) between the set of premises and the statement p_i.\n-Return a final assessment if p_i is entailed by the premises and definitions and the proof.\n\np_i: {p_i}",
         "template_variables": [
             "p_i",
         ],
@@ -376,7 +376,7 @@ test_statement()
     },
     STATEMENT_VERIFICATION_LABEL: {
         "description": "Verifies if a given statement p_i is correct.",
-        "tactic_prompt_template": "Given a statement p_i verify if the statement is correct by formally:\n-Eliciting definitions for all terms used in p_i.\n-Eliciting all relevant premises behind p_i.\n-Establishing the soundness of each premise and definition.\n-Building a granular syllogistic inference between the set of premises and the statement p_i.\n-Return a final assessment if p_i is entailed by the premises and definitions.\n\np_i: {p_i}",
+        "tactic_prompt_template": "Given a statement p_i, verify if the statement is correct by formally:\n-Eliciting definitions for all terms used in p_i.\n-Eliciting all relevant premises behind p_i.\n-Establishing the soundness of each premise and definition.\n-Building a granular syllogistic inference between the set of premises and the statement p_i.\n-Return a final assessment if p_i is entailed by the premises and definitions.\n\np_i: {p_i}",
         "template_variables": [
             "p_i",
         ],

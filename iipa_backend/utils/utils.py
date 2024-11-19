@@ -1,7 +1,9 @@
 import contextlib
 import importlib.util
 import io
+import sys
 # import traceback
+
 
 
 def get_class(module_path, class_name):
@@ -30,3 +32,15 @@ def execute_code_str(code):
         # error = traceback.format_exc()
     output = error_str if error_str else buffer.getvalue()
     return output
+
+async def a_capture_prints(method):
+    buffer = io.StringIO()
+    original_stdout = sys.stdout
+    try:
+        sys.stdout = buffer
+        await method()
+    finally:
+        sys.stdout = original_stdout
+    captured_prints = buffer.getvalue()
+    buffer.close()
+    return captured_prints

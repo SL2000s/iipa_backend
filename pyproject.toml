@@ -6,7 +6,7 @@ authors = ["Simon Ljungbeck <simon.ljungbeck@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.9,<3.13"
 fastapi = "^0.115.0"
 uvicorn = {extras = ["standard"], version = "^0.31.1"}
 sqlalchemy = "^2.0.35"
@@ -19,6 +19,7 @@ jinja2 = "^3.1.4"
 llama-index = "^0.11.19"
 llama-index-embeddings-azure-openai = "^0.2.5"
 llama-index-llms-azure-openai = "^0.2.2"
+autogen-agentchat = ">=0.2,<1.0"
 
 
 [tool.poetry.group.dev.dependencies]
