@@ -75,14 +75,12 @@ USER INSTRUCTION: {user_prompt}"""
 #############################
 ######## INDEX QUERY ########
 #############################
+INDEX_QUERY_CONTEXT_START = "Context information is below.\n---------------------"
+INDEX_QUERY_CONTEXT_END = "---------------------\nGiven the context information, answer the query."
 INDEX_QUERY_PROMPT_TEMPLATE = (
-    "Context information is below.\n"
-    "---------------------\n"
+    f"{INDEX_QUERY_CONTEXT_START}\n"
     "{context_str}\n"
-    "---------------------\n"
-    # "Given the context information and not prior knowledge, "
-    "Given the context information, "
-    "answer the query.\n"
+    f"{INDEX_QUERY_CONTEXT_END}\n"
     "Query: {query_str}\n"
     "Answer: "
 )  # from llama_index

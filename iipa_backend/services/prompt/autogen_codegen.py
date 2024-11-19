@@ -8,11 +8,13 @@ from iipa_backend.config.config import (
     OPENAI_API_VERSION,
     OPENAI_DEPLOYMENT_NAME,
     AUTOGEN_TMP_DIR,
+    INDEX_QUERY_CONTEXT_START,
+    INDEX_QUERY_CONTEXT_END,
 )
 from iipa_backend.utils.utils import a_capture_prints, delete_directory
 
 
-async def a_generate_code(quest):
+async def a_generate_code(quest, hide_content=True):
     llm_config = {                                  # TODO: move out from method (then do same in llm_quest.py)
         "model": OPENAI_DEPLOYMENT_NAME,
         "api_key": os.environ["OPENAI_API_KEY"],
@@ -35,4 +37,8 @@ async def a_generate_code(quest):
         )
     )
     delete_directory(AUTOGEN_TMP_DIR)
+    if hide_content:
+        i_start = chat_result.find(INDEX_QUERY_CONTEXT_START) + len(INDEX_QUERY_CONTEXT_START)
+        i_end = chat_result.find(INDEX_QUERY_CONTEXT_END)
+        chat_result = chat_result[:i_start] + "\n[HIDDEN CONTEXT...]\n" + chat_result[i_end:]
     return chat_result

@@ -12,7 +12,6 @@ import re
 import json
 
 
-
 from iipa_backend.config._prompts import(
     EXAMPLE_NL2TACTIC_TEMPLATE,
     NL2TACTIC_TEMPLATE,
@@ -20,6 +19,8 @@ from iipa_backend.config._prompts import(
     PROMPT_WITH_HISTORY_TEMPLATE,
     EXAMPLE_PROMPT2TEMPLATE_VARIABLES_TEMPLATE,
     PROMPT2TEMPLATE_VARIABLES_TEMPLATE,
+    INDEX_QUERY_CONTEXT_START,
+    INDEX_QUERY_CONTEXT_END,
     INDEX_QUERY_PROMPT_TEMPLATE,
 )
 
