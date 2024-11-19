@@ -73,17 +73,16 @@ async def llm_quest(prompt: str, extract_code: bool = False):
     return llm_ans_post_processed
 
 
-async def _index_aquest_with_statement_rag(
-        query: str, kb_label: str,
-        statement_patterns = STATEMENT_LABEL_PATTERNS,
-        statement_label_template = STATEMENT_LABEL_TEMPLATE,
-        indices_label2doc = INDICES_LABEL2DOC,
-        metadata_separator = METADATA_SEPARATOR,
-        metadata_template = DEFAULT_METADATA_TMPL,
-        text_node_template = DEFAULT_TEXT_NODE_TMPL,
-        index_query_prompt_template = INDEX_QUERY_PROMPT_TEMPLATE,
-        include_latex_macros = True,
-    ):
+def append_prompt_context(
+    query: str, kb_label: str,
+    statement_patterns = STATEMENT_LABEL_PATTERNS,
+    statement_label_template = STATEMENT_LABEL_TEMPLATE,
+    indices_label2doc = INDICES_LABEL2DOC,
+    metadata_separator = METADATA_SEPARATOR,
+    metadata_template = DEFAULT_METADATA_TMPL,
+    text_node_template = DEFAULT_TEXT_NODE_TMPL,
+    index_query_prompt_template = INDEX_QUERY_PROMPT_TEMPLATE,
+):
     index = INDICES.get(kb_label)
     if not index:
         return f"ERROR: could not find KB '{kb_label}'"                   # TODO: handle more properly
@@ -118,6 +117,14 @@ async def _index_aquest_with_statement_rag(
         context_str=context_str,
         query_str=query
     )
+    return prompt, statement_labels
+
+
+async def _index_aquest_with_statement_rag(
+    query: str, kb_label: str,
+    include_latex_macros = True,
+):
+    prompt, statement_labels = append_prompt_context(query, kb_label)
     response = await llm_quest(prompt)
     prompt_answer = PromptAnswer(answer=response)
     if include_latex_macros:
