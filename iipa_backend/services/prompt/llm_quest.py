@@ -31,7 +31,7 @@ from iipa_backend.models.prompt import PromptAnswer
 logger = logging.getLogger(__name__)
 
 
-async def openai_quest(prompt_template: PromptTemplate, template_variables: Dict = {}):
+def create_azure_openai_client():
     client = AzureChatOpenAI(
         model_name=OPENAI_MODEL_NAME,
         temperature=OPENAI_TEMPERATURE,
@@ -43,19 +43,31 @@ async def openai_quest(prompt_template: PromptTemplate, template_variables: Dict
         top_p=OPENAI_TOP_P,
         seed=OPENAI_SEED,
     )
+    return client
+
+
+async def a_openai_quest_prompt_template(prompt_template: PromptTemplate, template_variables: Dict = {}):
+    client = create_azure_openai_client()
     chain = prompt_template | client
     chain_results = await chain.ainvoke(template_variables)
     result_text = chain_results.content
     return result_text
 
 
+async def a_openai_quest(prompt: str):
+    client = create_azure_openai_client()
+    messages = [
+        ('system', 'You are an helpful assistant.'),
+        ('user', prompt)
+    ]
+    results = await client.ainvoke(messages)
+    result_text = results.content
+    return result_text
+
+
 async def llm_quest(prompt: str, extract_code: bool = False):
     logger.debug(f'Requesting the LLM with this prompt:\n{prompt}')
-    prompt_template = PromptTemplate.from_template(
-        prompt,
-        template_format=PROMPT_TEMPLATE_FORMAT,
-    )
-    llm_ans = await openai_quest(prompt_template)
+    llm_ans = await a_openai_quest(prompt)
     logger.debug(f'LLM responded with this answer:\n{llm_ans}')
     llm_ans_post_processed = post_process_llm_ans(llm_ans, extract_code)
     logger.debug(f'Returning this post-processed LLM answer:\n{llm_ans_post_processed}')

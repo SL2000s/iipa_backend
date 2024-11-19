@@ -7,7 +7,6 @@ import sys
 # import traceback
 
 
-
 def get_class(module_path, class_name):
     spec = importlib.util.spec_from_file_location(class_name, module_path)
     module = importlib.util.module_from_spec(spec)
