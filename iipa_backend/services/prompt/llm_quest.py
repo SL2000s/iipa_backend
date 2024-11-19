@@ -6,7 +6,6 @@ from langchain.prompts.prompt import PromptTemplate
 from langchain_openai import AzureChatOpenAI
 
 from iipa_backend.config.config import (
-    PROMPT_TEMPLATE_FORMAT,
     OPENAI_MODEL_NAME,
     OPENAI_TEMPERATURE,
     OPENAI_API_TYPE,
@@ -164,12 +163,3 @@ def post_process_llm_ans(llm_ans: str, extract_code: bool = False):
     if extract_code:
         llm_ans = extract_llm_ans_code(llm_ans)
     return llm_ans
-
-
-if __name__ == '__main__':              # TODO: remove
-    from dotenv import load_dotenv
-    load_dotenv()
-    import asyncio
-    # ans = asyncio.run(llm_quest('What is 1+1?'))
-    ans = asyncio.run(kb_quest('What does Theorem 1 say?', 'lm_theory'))
-    print(ans)
