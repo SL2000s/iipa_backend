@@ -56,8 +56,9 @@ Settings.llm = LLM
 Settings.embed_model = EMBED_MODEL
 LM_THEORY_LABEL = 'lm_theory'
 
+LM_THEORY_INDEX_COPY_ROOT = os.path.join(PKG_ROOT, 'data', 'knowledgebases', 'lm_theory', 'llama_index')  # TODO: this is a temporary docker workaround...
 INDICES_JSON_PATHS = {
-    LM_THEORY_LABEL: os.getenv('LM_THEORY_INDEX_JSON_PATH'),
+    LM_THEORY_LABEL: os.path.join(LM_THEORY_INDEX_COPY_ROOT, 'documents.json') # TODO: this is a temporary docker workaround... # os.getenv('LM_THEORY_INDEX_JSON_PATH'),
 }
 INDEX_JSONS = {}
 INDICES_LABEL2DOC = {}
@@ -69,7 +70,7 @@ for kb_label, json_path in INDICES_JSON_PATHS.items():
         INDICES_LABEL2DOC[kb_label] = label2doc
 
 INDICES_PATHS = {
-    LM_THEORY_LABEL: os.getenv('LM_THEORY_INDEX_PATH'),
+    LM_THEORY_LABEL: os.path.join(LM_THEORY_INDEX_COPY_ROOT, 'persist_index') # TODO: this is a temporary docker workaround...  # os.getenv('LM_THEORY_INDEX_PATH'),
 }
 INDICES = {}
 for kb_label, persist_dir in INDICES_PATHS.items():
@@ -78,7 +79,7 @@ for kb_label, persist_dir in INDICES_PATHS.items():
     INDICES[kb_label] = index
 
 LATEX_DEFS_PATHS = {
-    LM_THEORY_LABEL: os.getenv('LM_THEORY_LATEX_DEFS_JSON_PATH')
+    LM_THEORY_LABEL: os.path.join(LM_THEORY_INDEX_COPY_ROOT, 'statement2latex_defs.json')  # TODO: this is a temporary docker workaround...  # os.getenv('LM_THEORY_LATEX_DEFS_JSON_PATH')
 }
 LATEX_DEFS = {}
 for kb_label, json_path in LATEX_DEFS_PATHS.items():
